@@ -1,0 +1,8 @@
+{
+  "name": "liqi-gtd",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@upstash/redis": "1.34.3"
+  }
+}

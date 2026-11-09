@@ -249,7 +249,7 @@ h1 .g{color:var(--cyan);text-shadow:4px 4px 0 var(--violet)}
 const CONFIG = {
   handle: "liqiely",
   tweetId: "",          // ID of the GTD announcement post, e.g. "1855555555555555555". Empty = Like/RT/Reply open the profile.
-  submitUrl: "",        // Google Apps Script web app URL (see apps-script.gs). Saves entries + counts referrals.
+  api: "/api",          // Vercel API routes (api/submit.js, api/stats.js). Empty = save only in the browser.
   siteUrl: ""           // Your live site URL for referral links, e.g. "https://liqi-gtd.vercel.app". Empty = current page.
 };
 /* ================================ */
@@ -299,8 +299,8 @@ function renderTasks(){
 }
 function refLink(){const base=CONFIG.siteUrl||(location.origin+location.pathname);return base+"?ref="+encodeURIComponent(S.x)}
 async function loadRefs(){
-  if(!CONFIG.submitUrl||!S.x)return;
-  try{const r=await fetch(CONFIG.submitUrl+"?x="+encodeURIComponent(S.x));const j=await r.json();
+  if(!CONFIG.api||!S.x)return;
+  try{const r=await fetch(CONFIG.api+"/stats?x="+encodeURIComponent(S.x));const j=await r.json();
     if(typeof j.refs==="number"){S.refs=j.refs;store.set(S);render()}}catch(e){}
 }
 function render(){
@@ -346,11 +346,20 @@ $("#f3").addEventListener("submit",async e=>{
   const w=$("#evm").value.trim();
   if(!/^0x[a-fA-F0-9]{40}$/.test(w)){$("#e3").textContent="That's not a valid EVM address. It starts with 0x and has 40 hex characters.";return}
   $("#e3").textContent="";
-  if(CONFIG.submitUrl){
+  if(CONFIG.api){
+    const label=$("#b3").textContent;
     $("#b3").disabled=true;$("#b3").textContent="Saving…";
-    try{await fetch(CONFIG.submitUrl,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify({x:S.x,wallet:w,ref:(S.ref&&S.ref.toLowerCase()!==S.x.toLowerCase())?S.ref:"",tasks:Object.keys(S.done),ts:new Date().toISOString()})});}
-    catch(err){$("#e3").textContent="Couldn't reach the server. Check your connection and submit again.";$("#b3").disabled=false;$("#b3").textContent="Submit";return}
+    let j=null;
+    try{
+      const r=await fetch(CONFIG.api+"/submit",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({x:S.x,wallet:w,ref:(S.ref&&S.ref.toLowerCase()!==S.x.toLowerCase())?S.ref:"",tasks:Object.keys(S.done)})});
+      j=await r.json().catch(()=>null);
+      if(!r.ok||!j||!j.ok){
+        const msg={wallet_taken:"This wallet is already registered with another X account.",bad_wallet:"That's not a valid EVM address.",bad_x:"Your X handle looks wrong. Refresh and enter it again.",tasks_incomplete:"Finish all four quests first.",rate_limited:"Too many tries. Wait a minute and submit again."}[j&&j.error]||"Couldn't save your entry. Try again in a moment.";
+        $("#e3").textContent=msg;$("#b3").disabled=false;$("#b3").textContent=label;return}
+    }catch(err){$("#e3").textContent="Couldn't reach the server. Check your connection and submit again.";$("#b3").disabled=false;$("#b3").textContent=label;return}
     $("#b3").disabled=false;
+    if(typeof j.refs==="number")S.refs=j.refs;
   }
   S.wallet=w; store.set(S); render();
   $("#s4").scrollIntoView({behavior:"smooth",block:"center"});
