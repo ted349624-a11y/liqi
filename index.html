@@ -31,7 +31,7 @@
 <style>
 /* Layout: a single pixel "quest scroll" — banner on top, three spirits, then one stepped panel (handle → X quests → wallet). Dark-only by choice. */
 :root{
-  --void:#14042a;        /* page ground */
+  --void:#04000f;        /* page ground: banner black */
   --night:#22093f;       /* panel */
   --dusk:#341062;        /* raised */
   --line:#4b1d86;        /* pixel borders */
@@ -50,7 +50,6 @@
 *{box-sizing:border-box}
 body{background:var(--void);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px;
-  background-image:radial-gradient(circle at 50% 0%,#2a0b52 0,transparent 60%);
   overflow-x:hidden}
 #sky{position:fixed;inset:0;z-index:0;pointer-events:none;image-rendering:pixelated;width:100%;height:100%}
 .wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:28px;padding-top:20px}
@@ -84,7 +83,7 @@ h1 .g{color:var(--cyan);text-shadow:4px 4px 0 var(--violet)}
 @keyframes bob{50%{transform:translateY(-6px)}}
 
 /* quest panel */
-.panel{border:var(--px) solid var(--line);background:var(--night);box-shadow:8px 8px 0 #0a0115;display:flex;flex-direction:column}
+.panel{border:var(--px) solid var(--line);background:rgba(20,4,48,.88);backdrop-filter:blur(2px);box-shadow:8px 8px 0 #0a0115;display:flex;flex-direction:column}
 .phead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:var(--px) solid var(--line);background:var(--dusk);flex-wrap:wrap}
 .phead h2{font-family:var(--f-display);font-size:22px;margin:0;font-weight:600}
 .meter{display:flex;gap:4px}
@@ -160,7 +159,7 @@ h1 .g{color:var(--cyan);text-shadow:4px 4px 0 var(--violet)}
   .ico{width:40px;height:40px}
   .tk-top{grid-template-columns:84px 1fr;gap:12px}.tk-top img{width:84px}
 }
-@media (prefers-reduced-motion:reduce){.spirit{animation:none}#sky{display:none}}
+@media (prefers-reduced-motion:reduce){.spirit{animation:none}}
 </style>
 
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -366,16 +365,42 @@ $("#f3").addEventListener("submit",async e=>{
 render();
 if(S.wallet)loadRefs();
 
-/* pixel embers */
+/* pixel smoke background (matches the banner) */
 (function(){
-  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-  const c=$("#sky"),x=c.getContext("2d");let W,H,P=[];
-  const cols=["#3ff0ff","#8b4dff","#ff3fb4","#29f2b5","#4b1d86"];
-  function size(){W=c.width=Math.ceil(innerWidth/6);H=c.height=Math.ceil(innerHeight/6);
-    P=Array.from({length:Math.round(W*H/180)},()=>({x:Math.random()*W,y:Math.random()*H,v:.05+Math.random()*.15,c:cols[Math.random()*cols.length|0],a:Math.random()}))}
-  size();addEventListener("resize",size);
-  (function f(){x.clearRect(0,0,W,H);for(const p of P){p.y-=p.v;if(p.y<0){p.y=H;p.x=Math.random()*W}
-    x.globalAlpha=.25+.35*Math.abs(Math.sin((p.a+=.01)));x.fillStyle=p.c;x.fillRect(p.x|0,p.y|0,1,1)}requestAnimationFrame(f)})();
+  const c=$("#sky"),x=c.getContext("2d");
+  const CELL=10, RAMP=[[4,0,15],[10,1,40],[18,3,70],[30,5,110],[49,5,137],[74,16,184],[107,25,227],[138,63,240]];
+  const SQ=["#3b2bd6","#4a10b8","#5b2ee8","#2a1a8f","#6b19e3"];
+  let W,H,img,sq=[],t=0;
+  const perm=new Uint8Array(512);{const p=[...Array(256).keys()];for(let i=255;i>0;i--){const j=Math.random()*(i+1)|0;[p[i],p[j]]=[p[j],p[i]]}for(let i=0;i<512;i++)perm[i]=p[i&255]}
+  const fade=v=>v*v*(3-2*v), h=(i,j)=>perm[(perm[i&255]+j)&511]/255;
+  function noise(X,Y){const i=Math.floor(X),j=Math.floor(Y),fx=fade(X-i),fy=fade(Y-j);
+    const a=h(i,j),b=h(i+1,j),cc=h(i,j+1),d=h(i+1,j+1);return a+(b-a)*fx+(cc-a)*fy+(a-b-cc+d)*fx*fy}
+  function fbm(X,Y){let v=0,a=.5;for(let o=0;o<4;o++){v+=a*noise(X,Y);X*=2;Y*=2;a*=.5}return v}
+  function size(){W=c.width=Math.ceil(innerWidth/CELL);H=c.height=Math.ceil(innerHeight/CELL);img=x.createImageData(W,H);
+    sq=Array.from({length:Math.round(W*H/90)},()=>({x:Math.random()*W,y:Math.random()*H,v:.01+Math.random()*.03,c:SQ[Math.random()*SQ.length|0],s:Math.random()<.3?2:1,a:Math.random()*6}))}
+  function draw(){
+    const d=img.data;
+    for(let y=0;y<H;y++){
+      const ny=y/H;
+      const bottom=Math.max(0,(ny-.45)/.55), top=Math.max(0,(.28-ny)/.28)*.75;
+      for(let X=0;X<W;X++){
+        const nx=X/W, side=Math.abs(nx-.5)*2;
+        const mask=bottom*bottom*1.25+top*side*1.1+side*side*.18;
+        let v=fbm(X*.07+t*.6,y*.09-t*.35)*mask*1.55 - .18;
+        v=Math.max(0,Math.min(.999,v));
+        const col=RAMP[(v*RAMP.length)|0], k=(y*W+X)*4;
+        d[k]=col[0];d[k+1]=col[1];d[k+2]=col[2];d[k+3]=255;
+      }
+    }
+    x.putImageData(img,0,0);
+    for(const p of sq){p.y-=p.v;if(p.y<-2){p.y=H+1;p.x=Math.random()*W}
+      x.globalAlpha=.35+.4*Math.abs(Math.sin(p.a+=.01));x.fillStyle=p.c;x.fillRect(p.x|0,p.y|0,p.s,p.s)}
+    x.globalAlpha=1;
+  }
+  size();addEventListener("resize",()=>{size();draw()});
+  const still=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  draw(); if(still)return;
+  let last=0;(function f(ts){if(ts-last>66){t+=.012;draw();last=ts}requestAnimationFrame(f)})(0);
 })();
 </script>
 
