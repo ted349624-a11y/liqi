@@ -2,8 +2,11 @@ import { redis, k } from "../lib/db.js";
 
 // GET /api/export?key=ADMIN_KEY  → CSV of every entry with its raffle entries.
 export default async function handler(req, res) {
-  if (!process.env.ADMIN_KEY || req.query.key !== process.env.ADMIN_KEY)
-    return res.status(401).send("Unauthorized");
+  const want = String(process.env.ADMIN_KEY || "").trim();
+  const got = String(req.query.key || "").trim();
+  if (!want) return res.status(500).send("ADMIN_KEY is not set on this deployment. Add it in Vercel → Settings → Environment Variables (Production), then Redeploy.");
+  if (!got) return res.status(401).send("Missing key. Open /api/export?key=YOUR_ADMIN_KEY");
+  if (got !== want) return res.status(401).send("Wrong key. It must match ADMIN_KEY exactly (case-sensitive).");
   try {
     const users = await redis.smembers(k.users);
     const rows = [["x", "wallet", "ref", "refs", "entries", "ts"]];
