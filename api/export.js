@@ -21,6 +21,23 @@ export default async function handler(req, res) {
         rows.push([u.x || batch[j], u.wallet || "", u.ref || "", refs, 1 + refs, u.ts || ""]);
       }
     }
+    // Allowlist mode: /api/export?key=...&format=allowlist&limit=300
+    // Wallets only, oldest registrations first, one per line, no header, no mint limit.
+    if (req.query.format === "allowlist") {
+      const limit = Math.max(1, Math.min(10000, parseInt(req.query.limit, 10) || 300));
+      const seen = new Set();
+      const list = rows.slice(1)
+        .filter((r) => /^0x[a-fA-F0-9]{40}$/.test(r[1]))
+        .sort((a, b) => String(a[5]).localeCompare(String(b[5])))
+        .filter((r) => { const w = r[1].toLowerCase(); if (seen.has(w)) return false; seen.add(w); return true; })
+        .slice(0, limit)
+        .map((r) => r[1]);
+      res.setHeader("Content-Type", "text/csv; charset=utf-8");
+      res.setHeader("Content-Disposition", `attachment; filename="liqi-gtd-first-${list.length}.csv"`);
+      res.setHeader("Cache-Control", "no-store");
+      return res.status(200).send(list.join("\n") + "\n");
+    }
+
     const csv = rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
     res.setHeader("Content-Type", "text/csv; charset=utf-8");
     res.setHeader("Content-Disposition", 'attachment; filename="liqi-gtd.csv"');
