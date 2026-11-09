@@ -1,6 +1,6 @@
-# Liqi — Access list
+# Liqi — Claim your welcome bonus
 
-[@liqiely](https://x.com/liqiely) için erişim listesi sayfası.
+[@liqiely](https://x.com/liqiely) için karşılama bonusu ($35) sayfası.
 
 **Akış:** X kullanıcı adı → X görevleri (takip, beğeni, repost, kendi yazdığın yorum, bildirim aç) → Robinhood Wallet (Ethereum, `0x…`) adresi → liste onayı.
 

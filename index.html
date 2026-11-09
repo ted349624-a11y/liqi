@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Liqi — Access list</title>
-<meta name="description" content="Finish the tasks on X, drop your Robinhood Wallet address, and you're on the Liqi access list.">
+<title>Liqi — Claim your welcome bonus</title>
+<meta name="description" content="Finish the tasks on X, add your Robinhood Wallet address, and your $35 Liqi welcome bonus is reserved. Payouts go live soon.">
 <meta name="theme-color" content="#07181f">
 
 <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -18,13 +18,13 @@
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.liqiely.xyz/">
-<meta property="og:title" content="Liqi — Access list">
-<meta property="og:description" content="Finish the tasks on X, drop your Robinhood Wallet address, and you're on the list.">
+<meta property="og:title" content="Liqi — Claim your welcome bonus">
+<meta property="og:description" content="Finish the tasks on X, add your Robinhood Wallet address, and your $35 welcome bonus is reserved. Payouts go live soon.">
 <meta property="og:image" content="https://www.liqiely.xyz/assets/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@liqiely">
-<meta name="twitter:title" content="Liqi — Access list">
-<meta name="twitter:description" content="Finish the tasks on X, drop your Robinhood Wallet address, and you're on the list.">
+<meta name="twitter:title" content="Liqi — Claim your welcome bonus">
+<meta name="twitter:description" content="Finish the tasks on X, add your Robinhood Wallet address, and your $35 welcome bonus is reserved. Payouts go live soon.">
 <meta name="twitter:image" content="https://www.liqiely.xyz/assets/og-image.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,9 +34,9 @@
 <style>
 /* ------------------------------------------------------------------
    Liqi access list.
-   One family (Chakra Petch — its cut corners echo the mark's chamfers),
-   one accent (the mark's mint), one memorable moment (the mark
-   assembling on load). Everything else stays quiet.
+   One family (Chakra Petch — its cut corners echo the logo's chamfers),
+   one accent (the logo's mint), one loud element: the $35.
+   Everything else stays quiet.
 ------------------------------------------------------------------- */
 :root{
   --ink:#07181f;        /* page */
@@ -91,14 +91,18 @@ button,input{font:inherit}
 @media (max-width:900px){.stage{grid-template-columns:1fr;gap:40px}}
 
 .hero{position:sticky;top:32px}
-@media (max-width:900px){.hero{position:static}.mark{width:min(70%,260px)}}
-.mark{width:min(100%,420px);height:auto;display:block;margin-left:-6px}
-.mark .p{transition:transform 900ms cubic-bezier(.2,.9,.2,1),opacity 600ms ease}
-.mark.pre .p1{transform:translate(-60px,0);opacity:0}
-.mark.pre .p2{transform:translate(0,80px);opacity:0}
-.mark.pre .p3{transform:translate(60px,-40px);opacity:0}
-h1{font-weight:700;font-size:clamp(34px,4.6vw,58px);line-height:1.02;letter-spacing:-.01em;margin:28px 0 14px;max-width:14ch;text-wrap:balance}
+@media (max-width:900px){.hero{position:static}}
+h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spacing:.01em;margin:10px 0 22px;max-width:11ch;text-wrap:balance}
+.eyebrow{margin:0;color:var(--mute);font-weight:500}
+.bonus{display:flex;align-items:flex-end;gap:16px;margin:0 0 20px}
+.bonus .amt{font-size:clamp(64px,8vw,104px);font-weight:700;line-height:.9;color:var(--mint);letter-spacing:-.02em}
+.bonus .for{color:var(--ice);max-width:16ch;line-height:1.3;padding-bottom:8px}
+.status{display:flex;gap:12px;align-items:flex-start;margin-top:22px;padding:14px 16px;background:var(--deep);border:1px solid var(--line);color:var(--mute);font-size:15px;max-width:52ch;
+  clip-path:polygon(var(--c-s) 0,100% 0,100% calc(100% - var(--c-s)),calc(100% - var(--c-s)) 100%,0 100%,0 var(--c-s))}
+.status b{color:var(--warn);font-weight:600}
+.status .dot{flex:none;width:10px;height:10px;margin-top:6px;background:var(--warn);clip-path:polygon(3px 0,100% 0,100% calc(100% - 3px),calc(100% - 3px) 100%,0 100%,0 3px)}
 .lede{margin:0;color:var(--mute);font-size:clamp(16px,1.3vw,18px);max-width:46ch}
+.count[hidden]{display:none}
 .count{margin-top:28px;display:inline-flex;align-items:baseline;gap:10px;color:var(--mute)}
 .count b{font-size:28px;color:var(--mint);font-weight:600;font-variant-numeric:tabular-nums}
 
@@ -172,10 +176,6 @@ footer{margin-top:72px;color:var(--mute);font-size:14px;display:flex;flex-wrap:w
 footer a{color:var(--mute)}
 footer a:hover{color:var(--mint)}
 
-@media (prefers-reduced-motion:reduce){
-  .mark .p{transition:none}
-  .mark.pre .p{transform:none;opacity:1}
-}
 </style>
 </head>
 <body>
@@ -191,17 +191,15 @@ footer a:hover{color:var(--mint)}
 
   <main class="stage">
     <section class="hero">
-      <svg class="mark pre" id="mark" viewBox="60 88 280 224" role="img" aria-label="Liqi mark" fill="#90fbdd" fill-rule="evenodd">
-        <path class="p p1" d="M71 140H328V177H277L268 200H297V236H249L222 301H177L155 247H190L200 266L230 177H71Z M96 98H135L154 140H109Z"/>
-        <path class="p p2" d="M102 200H132V187H168L176 200H213L199 237H102Z"/>
-        <path class="p p3" d="M264 98H305L292 130H252Z"/>
-      </svg>
-      <h1>Five moves on X. One wallet. You're on the list.</h1>
-      <p class="lede">Liqi is opening the access list. Tell us who you are on X, finish the tasks on the launch post, then paste the address from your Robinhood Wallet.</p>
+      <p class="eyebrow">Welcome bonus</p>
+      <h1>CLAIM YOUR WELCOME BONUS</h1>
+      <div class="bonus"><span class="amt">$35</span><span class="for">for every account that completes the three steps</span></div>
+      <p class="lede">Enter your X handle, finish the tasks on the launch post, add your Robinhood Wallet address. Your bonus is reserved as soon as you're on the list.</p>
+      <div class="status"><span class="dot"></span><span><b>Bonus payouts are not live yet.</b> Activation will be announced on @liqiely — keep notifications on.</span></div>
       <div class="count" id="count" hidden><b id="countNum">0</b><span>wallets on the list</span></div>
     </section>
 
-    <section class="panel cut" id="panel" aria-label="Join the list">
+    <section class="panel cut" id="panel" aria-label="Claim your welcome bonus">
       <div class="steps">
 
         <!-- 1. handle -->
@@ -262,7 +260,7 @@ footer a:hover{color:var(--mint)}
             <form id="f3" novalidate>
               <label class="field cut-s"><input id="wallet" name="wallet" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="42" placeholder="0x…" aria-label="Wallet address"></label>
               <p class="msg" id="m3"></p>
-              <button class="btn wide" type="submit" id="b3">Join the list</button>
+              <button class="btn wide" type="submit" id="b3">Claim my bonus</button>
             </form>
           </div>
         </article>
@@ -270,8 +268,8 @@ footer a:hover{color:var(--mint)}
       </div>
 
       <div class="done-card">
-        <h2>You're on the list, <span id="doneHandle">@you</span>.</h2>
-        <p>We'll check the tasks against the post before anything goes out. Keep notifications on so you don't miss the next step.</p>
+        <h2>Your $35 welcome bonus is reserved, <span id="doneHandle">@you</span>.</h2>
+        <p>Payouts aren't live yet. We'll check the tasks against the post, then announce activation on @liqiely — keep notifications on so you see it first.</p>
         <span class="addr" id="doneWallet"></span>
         <a class="btn wide" id="shareBtn" target="_blank" rel="noopener">Share on X</a>
       </div>
@@ -400,7 +398,7 @@ $("#f3").addEventListener("submit", async e => {
 function finish(w){
   $("#doneHandle").textContent = "@" + state.handle;
   $("#doneWallet").textContent = w;
-  const text = `Just joined the Liqi access list. @${CONFIG.handle}`;
+  const text = `Reserved my $35 Liqi welcome bonus. @${CONFIG.handle}`;
   $("#shareBtn").href = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(CONFIG.siteUrl)}`;
   $("#panel").classList.add("finished");
   $("#panel").style.setProperty("--fill", "100%");
@@ -423,8 +421,6 @@ async function loadCount(force){
 }
 loadCount();
 
-// --- the one animation: the mark assembles ---
-requestAnimationFrame(() => requestAnimationFrame(() => $("#mark").classList.remove("pre")));
 </script>
 </body>
 </html>
