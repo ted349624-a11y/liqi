@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Liqi GTD Mint</title>
-<meta name="description" content="Complete the Liqi spirit quests on X and claim your GTD mint raffle entry.">
-<meta name="theme-color" content="#14042a">
+<title>Liqi — Access list</title>
+<meta name="description" content="Finish the tasks on X, drop your Robinhood Wallet address, and you're on the Liqi access list.">
+<meta name="theme-color" content="#07181f">
 
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -13,400 +13,418 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="msapplication-TileColor" content="#14042a">
+<meta name="msapplication-TileColor" content="#07181f">
 <meta name="msapplication-TileImage" content="/assets/mstile-150x150.png">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.liqiely.xyz/">
-<meta property="og:title" content="Liqi GTD Mint">
-<meta property="og:description" content="Complete the spirit quests and claim your GTD raffle entry.">
+<meta property="og:title" content="Liqi — Access list">
+<meta property="og:description" content="Finish the tasks on X, drop your Robinhood Wallet address, and you're on the list.">
 <meta property="og:image" content="https://www.liqiely.xyz/assets/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@liqiely">
-<meta name="twitter:title" content="Liqi GTD Mint">
-<meta name="twitter:description" content="Complete the spirit quests and claim your GTD raffle entry.">
+<meta name="twitter:title" content="Liqi — Access list">
+<meta name="twitter:description" content="Finish the tasks on X, drop your Robinhood Wallet address, and you're on the list.">
 <meta name="twitter:image" content="https://www.liqiely.xyz/assets/og-image.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&display=swap">
+
 <style>
-/* Layout: a single pixel "quest scroll" — banner on top, three spirits, then one stepped panel (handle → X quests → wallet). Dark-only by choice. */
+/* ------------------------------------------------------------------
+   Liqi access list.
+   One family (Chakra Petch — its cut corners echo the mark's chamfers),
+   one accent (the mark's mint), one memorable moment (the mark
+   assembling on load). Everything else stays quiet.
+------------------------------------------------------------------- */
 :root{
-  --void:#04000f;        /* page ground: banner black */
-  --night:#22093f;       /* panel */
-  --dusk:#341062;        /* raised */
-  --line:#4b1d86;        /* pixel borders */
-  --violet:#8b4dff;      /* brand violet */
-  --cyan:#3ff0ff;        /* accent: action */
-  --mint:#29f2b5;        /* done */
-  --pink:#ff3fb4;        /* eyes / alert */
-  --gold:#ffe58f;
-  --ink:#efe6ff;
-  --mute:#a996d2;
-  --f-display:"Pixelify Sans","Courier New",monospace;
-  --f-body:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
-  --px:4px;
+  --ink:#07181f;        /* page */
+  --deep:#0b222c;       /* panel */
+  --well:#0e2a35;       /* inputs / rows */
+  --line:#17404c;       /* hairline borders */
+  --mint:#90fbdd;       /* brand accent */
+  --mint-2:#3fd3ae;     /* pressed / dim accent */
+  --ice:#e9f7f2;        /* text */
+  --mute:#7fa49c;       /* secondary text */
+  --warn:#ffb86b;
+  --bad:#ff7d7d;
+  --f:"Chakra Petch",system-ui,sans-serif;
+  --c:14px;             /* chamfer size */
+  --c-s:8px;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-body{background:var(--void);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px;
-  overflow-x:hidden}
-#sky{position:fixed;inset:0;z-index:0;pointer-events:none;image-rendering:pixelated;width:100%;height:100%}
-.wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:28px;padding-top:20px}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{
+  background:var(--ink);color:var(--ice);font-family:var(--f);font-size:16px;line-height:1.5;
+  min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+/* faint diagonal hatch at the mark's angle, plus a mint pool behind the mark */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(60vmax 60vmax at 18% 40%, rgba(144,251,221,.10), transparent 60%),
+    repeating-linear-gradient(109deg, rgba(144,251,221,.045) 0 1px, transparent 1px 44px);
+}
+a{color:var(--mint)}
+button,input{font:inherit}
+:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
+
+/* chamfered corners, the logo's geometry carried into the UI */
+.cut{clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)),calc(100% - var(--c)) 100%,0 100%,0 var(--c))}
+.cut-s{--c:var(--c-s)}
+
+.page{position:relative;z-index:1;max-width:1180px;margin:0 auto;
+  padding:clamp(18px,3vw,32px) max(20px,env(safe-area-inset-right)) 64px max(20px,env(safe-area-inset-left))}
 
 /* top bar */
-.bar{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap}
-.logo{font-family:var(--f-display);font-weight:700;font-size:26px;letter-spacing:.06em;color:var(--ink);display:flex;align-items:center;gap:10px;text-decoration:none}
-.logo i{width:14px;height:14px;background:var(--cyan);box-shadow:4px 4px 0 var(--pink);display:inline-block}
-.xlink{font-family:var(--f-display);font-size:15px;color:var(--cyan);text-decoration:none;border:2px solid var(--line);padding:6px 12px;background:var(--night)}
-.xlink:hover{border-color:var(--cyan)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ice);font-weight:600;font-size:18px;letter-spacing:.02em}
+.brand svg{width:34px;height:34px;display:block}
+.xhandle{color:var(--mute);text-decoration:none;font-weight:500}
+.xhandle:hover{color:var(--mint)}
 
-/* hero */
-.hero{position:relative;overflow:hidden}
-.hero img{display:block;width:100%;height:auto;image-rendering:pixelated;aspect-ratio:1320/465}
-.hero .tag{position:absolute;left:12px;top:12px;font-family:var(--f-display);font-size:13px;letter-spacing:.12em;
-  background:var(--pink);color:#1a0330;padding:3px 9px;text-transform:uppercase}
-.headline{display:flex;flex-direction:column;gap:8px}
-h1{font-family:var(--f-display);font-weight:700;font-size:clamp(34px,7vw,58px);line-height:1;margin:0;text-wrap:balance;letter-spacing:.01em}
-h1 .g{color:var(--cyan);text-shadow:4px 4px 0 var(--violet)}
-.lede{margin:0;color:var(--mute);max-width:58ch}
+/* hero + panel */
+.stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,520px);gap:clamp(32px,5vw,72px);align-items:start;margin-top:clamp(36px,7vh,88px)}
+@media (max-width:900px){.stage{grid-template-columns:1fr;gap:40px}}
 
-/* spirits */
-.spirits{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.spirit{position:relative}
-.spirit img{display:block;width:100%;height:auto;image-rendering:pixelated;aspect-ratio:1}
-.spirit span{position:absolute;left:0;right:0;bottom:0;font-family:var(--f-display);font-size:13px;letter-spacing:.1em;text-transform:uppercase;
-  background:rgba(20,4,42,.82);padding:4px 8px;display:flex;justify-content:space-between}
-.spirit:nth-child(1) span b{color:var(--cyan)}.spirit:nth-child(2) span b{color:var(--gold)}.spirit:nth-child(3) span b{color:var(--violet)}
-.spirit{animation:bob 3.6s steps(4) infinite}
-.spirit:nth-child(2){animation-delay:-1.2s}.spirit:nth-child(3){animation-delay:-2.4s}
-@keyframes bob{50%{transform:translateY(-6px)}}
+.hero{position:sticky;top:32px}
+@media (max-width:900px){.hero{position:static}.mark{width:min(70%,260px)}}
+.mark{width:min(100%,420px);height:auto;display:block;margin-left:-6px}
+.mark .p{transition:transform 900ms cubic-bezier(.2,.9,.2,1),opacity 600ms ease}
+.mark.pre .p1{transform:translate(-60px,0);opacity:0}
+.mark.pre .p2{transform:translate(0,80px);opacity:0}
+.mark.pre .p3{transform:translate(60px,-40px);opacity:0}
+h1{font-weight:700;font-size:clamp(34px,4.6vw,58px);line-height:1.02;letter-spacing:-.01em;margin:28px 0 14px;max-width:14ch;text-wrap:balance}
+.lede{margin:0;color:var(--mute);font-size:clamp(16px,1.3vw,18px);max-width:46ch}
+.count{margin-top:28px;display:inline-flex;align-items:baseline;gap:10px;color:var(--mute)}
+.count b{font-size:28px;color:var(--mint);font-weight:600;font-variant-numeric:tabular-nums}
 
-/* quest panel */
-.panel{border:var(--px) solid var(--line);background:rgba(20,4,48,.88);backdrop-filter:blur(2px);box-shadow:8px 8px 0 #0a0115;display:flex;flex-direction:column}
-.phead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:var(--px) solid var(--line);background:var(--dusk);flex-wrap:wrap}
-.phead h2{font-family:var(--f-display);font-size:22px;margin:0;font-weight:600}
-.meter{display:flex;gap:4px}
-.meter i{width:16px;height:16px;background:#1a0634;border:2px solid var(--line)}
-.meter i.on{background:var(--mint);border-color:var(--mint)}
-.step{padding:20px 18px;border-bottom:2px dashed var(--line);display:flex;flex-direction:column;gap:14px}
-.step:last-child{border-bottom:0}
-.step.locked{opacity:.38;pointer-events:none;filter:saturate(.4)}
-.slabel{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-size:18px}
-.slabel em{font-style:normal;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#1a0330;background:var(--cyan);padding:2px 7px}
-.step.done .slabel em{background:var(--mint)}
-.hint{margin:0;color:var(--mute);font-size:13px}
-
-.field{display:flex;gap:10px;flex-wrap:wrap}
-.input{flex:1 1 220px;min-width:0;display:flex;align-items:center;background:#0f0320;border:3px solid var(--line)}
-.input:focus-within{border-color:var(--cyan)}
-.input b{padding:0 0 0 12px;color:var(--mute);font-weight:500}
-.input input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--ink);font:500 15px var(--f-body);padding:12px}
-.btn{font-family:var(--f-display);font-size:16px;font-weight:600;letter-spacing:.04em;cursor:pointer;border:0;
-  background:var(--cyan);color:#140330;padding:12px 20px;box-shadow:4px 4px 0 var(--violet);transition:transform .08s}
-.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--violet)}
-.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--violet)}
-.btn:focus-visible,.task button:focus-visible,.xlink:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
-.btn[disabled]{background:#3b2763;color:var(--mute);box-shadow:none;cursor:not-allowed;transform:none}
-.err{color:var(--pink);font-size:13px;margin:0;min-height:1em}
-.who{font-family:var(--f-display);color:var(--cyan)}
-
-/* tasks */
-.tasks{display:grid;gap:10px}
-.task{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:14px;background:#180530;border:3px solid var(--line);padding:10px 12px}
-.task.ok{border-color:var(--mint)}
-.ico{width:44px;height:44px;display:grid;place-items:center;background:var(--dusk);image-rendering:pixelated}
-.ico svg{width:24px;height:24px;fill:var(--ink)}
-.task.ok .ico{background:var(--mint)}.task.ok .ico svg{fill:#0d2a20}
-.tt{min-width:0}
-.tt strong{display:block;font-family:var(--f-display);font-size:17px;font-weight:600}
-.tt small{display:block;color:var(--mute);font-size:12.5px}
-.task button{font-family:var(--f-display);font-size:14px;font-weight:600;cursor:pointer;border:2px solid var(--cyan);background:transparent;color:var(--cyan);padding:8px 12px;white-space:nowrap}
-.task button.confirm{background:var(--gold);border-color:var(--gold);color:#2a1700}
-.task.tlock{opacity:.4;filter:saturate(.3)}
-.task button.lock{border-color:var(--line);color:var(--mute);cursor:not-allowed}
-.task button.fin{border-color:var(--mint);color:var(--mint);cursor:default}
-
-/* ticket */
-.ticket{border:var(--px) solid var(--mint);background:linear-gradient(135deg,#0f3030,#1b0b3c);display:flex;flex-direction:column;position:relative;box-shadow:6px 6px 0 #0a0115}
-.tk-top{display:grid;grid-template-columns:120px 1fr;gap:18px;align-items:center;padding:16px}
-.tk-top img{width:120px;max-width:100%;height:auto;image-rendering:pixelated}
-.tk-main small{font-family:var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:var(--mint);font-size:13px}
-.tk-count{font-family:var(--f-display);font-weight:700;line-height:.9;display:flex;align-items:baseline;gap:4px;color:var(--ink)}
-.tk-count span{font-size:34px;color:var(--pink)}.tk-count b{font-size:clamp(56px,14vw,84px);text-shadow:4px 4px 0 var(--violet)}
-.tk-main p{margin:4px 0 0;font-family:var(--f-display);font-size:18px}
-.tk-meta{margin:0;padding:12px 16px;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13px;border-top:2px dashed var(--mint)}
-.tk-meta dt{color:var(--mute);text-transform:uppercase;letter-spacing:.1em;font-size:11px;align-self:center}
-.tk-meta dd{margin:0;word-break:break-all;font-variant-numeric:tabular-nums}
-.tk-ref{padding:14px 16px 16px;border-top:2px dashed var(--mint);display:flex;flex-direction:column;gap:10px}
-.tk-ref label{font-size:13px;color:var(--mute)}.tk-ref label b{color:var(--gold)}
-.tk-ref input{font-size:13px}
-.share{align-self:flex-start;font-family:var(--f-display);color:var(--cyan);text-decoration:none;border:2px solid var(--cyan);padding:6px 12px}
-/* pass */
-.pass{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center;border:var(--px) solid var(--mint);background:#0f2a2a;padding:16px;
-  background:linear-gradient(135deg,#123232,#1b0b3c)}
-.pass img{width:150px;max-width:100%;height:auto;image-rendering:pixelated}
-.pass h3{font-family:var(--f-display);font-size:26px;margin:0 0 4px;color:var(--mint)}
-.pass dl{margin:8px 0 0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px}
-.pass dt{color:var(--mute);text-transform:uppercase;letter-spacing:.1em;font-size:11px;align-self:center}
-.pass dd{margin:0;word-break:break-all;font-variant-numeric:tabular-nums}
-.foot{color:var(--mute);font-size:12px;text-align:center}
-.foot a{color:var(--cyan)}
-
-@media (max-width:520px){
-  .spirits{gap:8px}.spirit span{font-size:10px;padding:3px 5px}
-  .task{grid-template-columns:40px 1fr;}.task button{grid-column:1/-1}
-  .ico{width:40px;height:40px}
-  .tk-top{grid-template-columns:84px 1fr;gap:12px}.tk-top img{width:84px}
+/* the panel: a single column with a spine on the left that fills as you go */
+.panel{background:var(--deep);padding:6px;position:relative}
+.panel::after{ /* mint edge along the chamfer */
+  content:"";position:absolute;left:0;top:0;width:3px;height:100%;background:linear-gradient(var(--mint) var(--fill,0%),var(--line) 0);transition:--fill .6s;
 }
-@media (prefers-reduced-motion:reduce){.spirit{animation:none}}
-</style>
+.steps{display:flex;flex-direction:column;gap:6px}
+.step{background:var(--well);padding:18px 20px 20px;position:relative}
+.step[data-state="locked"]{opacity:.45}
+.step[data-state="done"] .body{display:none}
+.step[data-state="locked"] .body{display:none}
+.step-h{display:flex;align-items:center;gap:14px}
+.num{width:30px;height:30px;flex:none;display:grid;place-items:center;font-weight:700;font-size:14px;
+  background:var(--line);color:var(--ice);clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
+.step[data-state="active"] .num{background:var(--mint);color:var(--ink)}
+.step[data-state="done"] .num{background:var(--mint-2);color:var(--ink)}
+.step-h h2{margin:0;font-size:18px;font-weight:600;flex:1;white-space:nowrap}
+.summary{color:var(--mute);font-size:15px;max-width:22ch;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.edit{background:none;border:0;color:var(--mint);cursor:pointer;padding:4px 6px;font-weight:500}
+.body{margin-top:16px}
+.hint{color:var(--mute);margin:0 0 14px;font-size:15px}
 
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+/* fields */
+.field{display:flex;align-items:stretch;background:var(--ink);border:1px solid var(--line)}
+.field:focus-within{border-color:var(--mint)}
+.field .pre{display:grid;place-items:center;padding:0 14px;color:var(--mute);border-right:1px solid var(--line);font-weight:500}
+.field input{flex:1;min-width:0;background:none;border:0;color:var(--ice);padding:14px 14px;font-size:17px;letter-spacing:.01em}
+.field input::placeholder{color:#4b6b65}
+.msg{min-height:22px;margin:8px 0 0;font-size:14px;color:var(--mute)}
+.msg.bad{color:var(--bad)}
+.msg.ok{color:var(--mint)}
+
+.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 22px;border:0;cursor:pointer;
+  background:var(--mint);color:var(--ink);font-weight:700;font-size:16px;letter-spacing:.01em;
+  clip-path:polygon(var(--c-s) 0,100% 0,100% calc(100% - var(--c-s)),calc(100% - var(--c-s)) 100%,0 100%,0 var(--c-s))}
+.btn:hover{background:#a9ffe8}
+.btn:active{background:var(--mint-2)}
+.btn[disabled]{background:var(--line);color:var(--mute);cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--mint);box-shadow:inset 0 0 0 1px var(--line)}
+.btn.ghost:hover{box-shadow:inset 0 0 0 1px var(--mint)}
+.btn.wide{width:100%;margin-top:14px}
+
+/* task rows */
+.tasks{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.task{display:grid;grid-template-columns:1fr auto;gap:8px 14px;align-items:center;background:var(--ink);border:1px solid var(--line);padding:12px 14px}
+.task.done{border-color:var(--mint-2)}
+.task .t{font-weight:600}
+.task .d{color:var(--mute);font-size:14px;grid-column:1}
+.task .act{grid-row:1 / span 2;display:flex;gap:8px;align-items:center}
+.task a.btn,.task button.btn{padding:10px 14px;font-size:14px}
+.task .ok{display:none;color:var(--mint);font-weight:600;padding:0 6px}
+.task.done .ok{display:inline}
+.task.done .act .btn{display:none}
+@media (max-width:460px){
+  .summary{max-width:12ch}
+  .task{grid-template-columns:1fr}
+  .task .act{grid-row:auto;justify-content:flex-start}
+}
+
+/* success */
+.done-card{display:none;background:var(--well);padding:28px 22px;text-align:left}
+.done-card h2{margin:0 0 8px;font-size:26px;font-weight:700}
+.done-card p{margin:0;color:var(--mute)}
+.done-card .addr{display:block;margin-top:14px;font-size:14px;color:var(--ice);word-break:break-all;background:var(--ink);padding:12px 14px;border:1px solid var(--line)}
+.panel.finished .steps{display:none}
+.panel.finished .done-card{display:block}
+
+footer{margin-top:72px;color:var(--mute);font-size:14px;display:flex;flex-wrap:wrap;gap:8px 24px}
+footer a{color:var(--mute)}
+footer a:hover{color:var(--mint)}
+
+@media (prefers-reduced-motion:reduce){
+  .mark .p{transition:none}
+  .mark.pre .p{transform:none;opacity:1}
+}
+</style>
 </head>
 <body>
-<canvas id="sky" aria-hidden="true"></canvas>
-<div class="wrap">
-  <div class="hero">
-    <img src="assets/banner.webp" alt="Violet Liqi spirit drifting through pixel smoke">
-  </div>
+<div class="page">
 
-  <section class="headline">
-    <h1>Claim your <span class="g">GTD</span> mint spot</h1>  </section>
+  <header class="top">
+    <a class="brand" href="/" aria-label="Liqi home">
+      <svg viewBox="60 88 280 224" aria-hidden="true" fill="#90fbdd" fill-rule="evenodd"><path d="M71 140H328V177H277L268 200H297V236H249L222 301H177L155 247H190L200 266L230 177H71Z M96 98H135L154 140H109Z"/><path d="M102 200H132V187H168L176 200H213L199 237H102Z"/><path d="M264 98H305L292 130H252Z"/></svg>
+      Liqi
+    </a>
+    <a class="xhandle" href="https://x.com/liqiely" target="_blank" rel="noopener">@liqiely on X</a>
+  </header>
 
-  <div class="spirits" aria-label="Liqi spirits">
-    <div class="spirit"><img src="assets/cyan.png" alt="Cyan Liqi spirit"><span><b>Frost</b>#001</span></div>
-    <div class="spirit"><img src="assets/gold.png" alt="Gold Liqi spirit"><span><b>Ember</b>#002</span></div>
-    <div class="spirit"><img src="assets/violet.png" alt="Violet Liqi spirit"><span><b>Haze</b>#003</span></div>
-  </div>
+  <main class="stage">
+    <section class="hero">
+      <svg class="mark pre" id="mark" viewBox="60 88 280 224" role="img" aria-label="Liqi mark" fill="#90fbdd" fill-rule="evenodd">
+        <path class="p p1" d="M71 140H328V177H277L268 200H297V236H249L222 301H177L155 247H190L200 266L230 177H71Z M96 98H135L154 140H109Z"/>
+        <path class="p p2" d="M102 200H132V187H168L176 200H213L199 237H102Z"/>
+        <path class="p p3" d="M264 98H305L292 130H252Z"/>
+      </svg>
+      <h1>Five moves on X. One wallet. You're on the list.</h1>
+      <p class="lede">Liqi is opening the access list. Tell us who you are on X, finish the tasks on the launch post, then paste the address from your Robinhood Wallet.</p>
+      <div class="count" id="count" hidden><b id="countNum">0</b><span>wallets on the list</span></div>
+    </section>
 
-  <section class="panel" aria-label="GTD quest">
-    <div class="phead">
-      <h2>Spirit Quest</h2>
-      <div class="meter" id="meter" aria-label="Progress"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-    </div>
+    <section class="panel cut" id="panel" aria-label="Join the list">
+      <div class="steps">
 
-    <!-- step 1 -->
-    <div class="step" id="s1">
-      <div class="slabel"><em>Step 1</em>Your X handle</div>
-      <form class="field" id="f1" novalidate>
-        <label class="input" for="xh"><b>@</b><input id="xh" autocomplete="off" spellcheck="false" placeholder="username" maxlength="15"></label>
-        <button class="btn" type="submit">Continue</button>
-      </form>
-      <p class="err" id="e1" role="alert"></p>
-    </div>
-
-    <!-- step 2 -->
-    <div class="step" id="s2" hidden>
-      <div class="slabel"><em>Step 2</em>Quests on X <span class="who" id="who"></span></div>
-      <p class="hint">Do the action on X, come back and tap <b>Confirm</b>. Write your reply yourself.</p>
-      <div class="tasks" id="tasks"></div>
-    </div>
-
-    <!-- step 3 -->
-    <div class="step" id="s3" hidden>
-      <div class="slabel"><em>Step 3</em>EVM wallet</div>
-      <form class="field" id="f3" novalidate>
-        <label class="input" for="evm"><input id="evm" autocomplete="off" spellcheck="false" placeholder="0x…" maxlength="42"></label>
-        <button class="btn" type="submit" id="b3">Submit</button>
-      </form>
-      <p class="err" id="e3" role="alert"></p>
-    </div>
-
-    <!-- ticket -->
-    <div class="step" id="s4" hidden>
-      <div class="ticket">
-        <div class="tk-top">
-          <img id="pimg" src="assets/cyan.png" alt="Your Liqi spirit">
-          <div class="tk-main">
-            <small>GTD Raffle</small>
-            <div class="tk-count"><span>x</span><b id="tcount">1</b></div>
-            <p id="tline">GTD raffle entry</p>
+        <!-- 1. handle -->
+        <article class="step" data-step="1" data-state="active">
+          <div class="step-h"><span class="num">1</span><h2>Your X handle</h2><span class="summary" id="sum1"></span><button class="edit" type="button" data-edit="1" hidden>Change</button></div>
+          <div class="body">
+            <p class="hint">The account you'll do the tasks from. We check it against the post later.</p>
+            <form id="f1" novalidate>
+              <label class="field cut-s"><span class="pre">@</span><input id="handle" name="handle" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="15" placeholder="yourhandle" aria-label="X handle"></label>
+              <p class="msg" id="m1"></p>
+              <button class="btn wide" type="submit">Continue</button>
+            </form>
           </div>
-        </div>
-        <dl class="tk-meta">
-          <dt>X</dt><dd id="px"></dd>
-          <dt>Wallet</dt><dd id="pw"></dd>
-          <dt>Refs</dt><dd id="pr">0</dd>
-        </dl>
-        <div class="tk-ref">
-          <label for="reflink">Your referral link · every ref = <b>+x1 entry</b></label>
-          <div class="field">
-            <div class="input"><input id="reflink" readonly></div>
-            <button class="btn" type="button" id="copy">Copy</button>
+        </article>
+
+        <!-- 2. tasks -->
+        <article class="step" data-step="2" data-state="locked">
+          <div class="step-h"><span class="num">2</span><h2>Tasks on X</h2><span class="summary" id="sum2"></span><button class="edit" type="button" data-edit="2" hidden>Change</button></div>
+          <div class="body">
+            <p class="hint">Each button opens X in a new tab. Come back and mark it done. The reply is yours to write — no copy-paste text from us.</p>
+            <ul class="tasks" id="tasks">
+              <li class="task" data-task="follow">
+                <span class="t">Follow @liqiely</span>
+                <span class="d">So the list can be checked against followers.</span>
+                <span class="act"><a class="btn ghost" data-open="follow" target="_blank" rel="noopener">Open</a><button class="btn" type="button" data-done hidden>Done</button><span class="ok">Done</span></span>
+              </li>
+              <li class="task" data-task="like">
+                <span class="t">Like the launch post</span>
+                <span class="d">One tap on the heart.</span>
+                <span class="act"><a class="btn ghost" data-open="like" target="_blank" rel="noopener">Open</a><button class="btn" type="button" data-done hidden>Done</button><span class="ok">Done</span></span>
+              </li>
+              <li class="task" data-task="repost">
+                <span class="t">Repost it</span>
+                <span class="d">A plain repost is enough; a quote works too.</span>
+                <span class="act"><a class="btn ghost" data-open="repost" target="_blank" rel="noopener">Open</a><button class="btn" type="button" data-done hidden>Done</button><span class="ok">Done</span></span>
+              </li>
+              <li class="task" data-task="reply">
+                <span class="t">Reply in your own words</span>
+                <span class="d">Anything real. Bot-looking replies get dropped.</span>
+                <span class="act"><a class="btn ghost" data-open="reply" target="_blank" rel="noopener">Open</a><button class="btn" type="button" data-done hidden>Done</button><span class="ok">Done</span></span>
+              </li>
+              <li class="task" data-task="notify">
+                <span class="t">Turn on notifications</span>
+                <span class="d">On the profile, tap the bell and choose all posts.</span>
+                <span class="act"><a class="btn ghost" data-open="notify" target="_blank" rel="noopener">Open</a><button class="btn" type="button" data-done hidden>Done</button><span class="ok">Done</span></span>
+              </li>
+            </ul>
+            <p class="msg" id="m2"></p>
+            <button class="btn wide" type="button" id="b2" disabled>Continue</button>
           </div>
-          <a class="share" id="share" target="_blank" rel="noopener">Share on X ↗</a>
-        </div>
+        </article>
+
+        <!-- 3. wallet -->
+        <article class="step" data-step="3" data-state="locked">
+          <div class="step-h"><span class="num">3</span><h2>Robinhood Wallet address</h2></div>
+          <div class="body">
+            <p class="hint">Open the Robinhood Wallet app, tap Receive, pick the Ethereum network and copy the address. It starts with 0x and is 42 characters long.</p>
+            <form id="f3" novalidate>
+              <label class="field cut-s"><input id="wallet" name="wallet" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="42" placeholder="0x…" aria-label="Wallet address"></label>
+              <p class="msg" id="m3"></p>
+              <button class="btn wide" type="submit" id="b3">Join the list</button>
+            </form>
+          </div>
+        </article>
+
       </div>
-    </div>
-  </section>
 
-  <p class="foot">Liqi never asks for your seed phrase or a wallet signature here. Only follow <a href="https://x.com/liqiely" target="_blank" rel="noopener">@liqiely</a>.</p>
+      <div class="done-card">
+        <h2>You're on the list, <span id="doneHandle">@you</span>.</h2>
+        <p>We'll check the tasks against the post before anything goes out. Keep notifications on so you don't miss the next step.</p>
+        <span class="addr" id="doneWallet"></span>
+        <a class="btn wide" id="shareBtn" target="_blank" rel="noopener">Share on X</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Liqi</span>
+    <a href="https://x.com/liqiely" target="_blank" rel="noopener">x.com/liqiely</a>
+    <span>We store only your handle and wallet address. Nothing else, never your keys.</span>
+  </footer>
 </div>
 
 <script>
-/* ===== CONFIG — edit these ===== */
+/* ====== CONFIG — edit these two lines ====== */
 const CONFIG = {
-  handle: "liqiely",
-  tweetId: "2119763862442623285",          // ID of the GTD announcement post, e.g. "1855555555555555555". Empty = Like/RT/Reply open the profile.
-  api: "/api",          // Vercel API routes (api/submit.js, api/stats.js). Empty = save only in the browser.
-  siteUrl: "https://www.liqiely.xyz"           // Your live site URL for referral links, e.g. "https://liqi-gtd.vercel.app". Empty = current page.
+  handle: "liqiely",   // your X account
+  tweetId: "",         // launch post ID (digits from the post URL). Empty = buttons open the profile.
+  siteUrl: "https://www.liqiely.xyz",
+  api: "/api"
 };
-/* ================================ */
+/* =========================================== */
 
-const IMG = {cyan:"assets/cyan.png",gold:"assets/gold.png",violet:"assets/violet.png"};
-const $ = s => document.querySelector(s);
-const store = {
-  get(){try{return JSON.parse(localStorage.getItem("liqi-gtd")||"{}")}catch(e){return {}}},
-  set(v){try{localStorage.setItem("liqi-gtd",JSON.stringify(v))}catch(e){}}
+const X_RE = /^[A-Za-z0-9_]{1,15}$/;
+const WALLET_RE = /^0x[a-fA-F0-9]{40}$/;
+const TASKS = ["follow","like","repost","reply","notify"];
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+
+const state = {
+  handle: localStorage.getItem("liqi.handle") || "",
+  tasks: new Set(JSON.parse(localStorage.getItem("liqi.tasks") || "[]")),
 };
-let S = Object.assign({x:"",done:{},wallet:"",ref:"",refs:0}, store.get());
-try{const r=new URLSearchParams(location.search).get("ref");if(r&&/^[A-Za-z0-9_]{1,15}$/.test(r)&&!S.wallet){S.ref=r;store.set(S)}}catch(e){}
-
-const ICONS = {
-  follow:'<svg viewBox="0 0 8 8"><path d="M3 0h2v1h1v2H5v1H3V3H2V1h1zM1 5h6v1h1v2H0V6h1z"/></svg>',
-  like:'<svg viewBox="0 0 8 8"><path d="M1 1h2v1h2V1h2v1h1v2H7v1H6v1H5v1H3V6H2V5H1V4H0V2h1z"/></svg>',
-  rt:'<svg viewBox="0 0 8 8"><path d="M1 1h5v1h1v3h1v1H6v1H5V6H4V5h2V2H2v1H1zM2 4v1h1v1H2v1H1V4zM3 6h4v1H3z"/></svg>',
-  reply:'<svg viewBox="0 0 8 8"><path d="M0 1h8v5H4L2 8V6H0zM1 2v3h2v1l1-1h3V2z"/></svg>'
+const save = () => {
+  localStorage.setItem("liqi.handle", state.handle);
+  localStorage.setItem("liqi.tasks", JSON.stringify([...state.tasks]));
 };
-const intent = {
-  follow:()=>`https://x.com/intent/follow?screen_name=${CONFIG.handle}`,
-  like:()=>CONFIG.tweetId?`https://x.com/intent/like?tweet_id=${CONFIG.tweetId}`:`https://x.com/${CONFIG.handle}`,
-  rt:()=>CONFIG.tweetId?`https://x.com/intent/retweet?tweet_id=${CONFIG.tweetId}`:`https://x.com/${CONFIG.handle}`,
-  reply:()=>CONFIG.tweetId?`https://x.com/intent/post?in_reply_to=${CONFIG.tweetId}`:`https://x.com/${CONFIG.handle}`
-};
-const TASKS = [
-  {id:"follow",t:"Follow @liqiely",d:"Join the spirits on X"},
-  {id:"like",t:"Like the GTD post",d:"Tap the heart on the announcement"},
-  {id:"rt",t:"Repost the GTD post",d:"Spread it to your timeline"},
-  {id:"reply",t:"Reply in your own words",d:"Opens an empty reply box — you write it"}
-];
-const opened = {};
 
-function spiritFor(x){let h=0;for(const c of x.toLowerCase())h=(h*31+c.charCodeAt(0))>>>0;return ["cyan","gold","violet"][h%3]}
-const NAMES={cyan:"Frost",gold:"Ember",violet:"Haze"};
-
-function renderTasks(){
-  $("#tasks").innerHTML = TASKS.map((t,i)=>{
-    const ok=S.done[t.id], open=opened[t.id];
-    const locked = i>0 && !TASKS.slice(0,i).every(p=>S.done[p.id]);
-    if(locked||ok) return "";
-    const btn = ok?`<button class="fin" disabled>Done ✓</button>`
-      : open?`<button class="confirm" data-c="${t.id}">Confirm</button>`
-      : `<button data-o="${t.id}">Open on X ↗</button>`;
-    return `<div class="task ${ok?'ok':''} ${locked?'tlock':''}"><div class="ico">${ICONS[t.id]}</div><div class="tt"><strong>${t.t}</strong><small>${t.d}</small></div>${btn}</div>`;
-  }).join("");
-}
-function refLink(){const base=CONFIG.siteUrl||(location.origin+location.pathname);return base+"?ref="+encodeURIComponent(S.x)}
-async function loadRefs(){
-  if(!CONFIG.api||!S.x)return;
-  try{const r=await fetch(CONFIG.api+"/stats?x="+encodeURIComponent(S.x));const j=await r.json();
-    if(typeof j.refs==="number"){S.refs=j.refs;store.set(S);render()}}catch(e){}
-}
-function render(){
-  const hasX=!!S.x, allDone=TASKS.every(t=>S.done[t.id]), fin=!!S.wallet;
-  $("#s1").hidden=hasX;
-  $("#s2").hidden=!hasX||allDone;
-  $("#s3").hidden=!(hasX&&allDone)||fin;
-  $("#s4").hidden=!fin;
-  const cur=Math.min(TASKS.filter(t=>S.done[t.id]).length+1,TASKS.length);
-  $("#who").textContent=hasX?`${cur}/${TASKS.length} · @${S.x}`:"";
-  renderTasks();
-  const n=(hasX?1:0)+TASKS.filter(t=>S.done[t.id]).length+(fin?1:0);
-  document.querySelectorAll("#meter i").forEach((el,i)=>el.classList.toggle("on",i<n));
-  if(fin){
-    const k=spiritFor(S.x),total=1+(S.refs||0);
-    $("#pimg").src=IMG[k];$("#px").textContent="@"+S.x;$("#pw").textContent=S.wallet;$("#pr").textContent=S.refs||0;
-    $("#tcount").textContent=total;
-    $("#tline").textContent=total===1?"GTD raffle entry":"GTD raffle entries";
-    const link=refLink();$("#reflink").value=link;
-    $("#share").href="https://x.com/intent/post?text="+encodeURIComponent("I just got my GTD raffle entry for @"+CONFIG.handle+" 👻\n\nGet yours:")+"&url="+encodeURIComponent(link);
+// --- links ---
+function xLink(kind){
+  const profile = `https://x.com/${CONFIG.handle}`;
+  const id = CONFIG.tweetId;
+  switch(kind){
+    case "follow": return `https://x.com/intent/follow?screen_name=${CONFIG.handle}`;
+    case "like":   return id ? `https://x.com/intent/like?tweet_id=${id}` : profile;
+    case "repost": return id ? `https://x.com/intent/retweet?tweet_id=${id}` : profile;
+    case "reply":  return id ? `https://x.com/intent/tweet?in_reply_to=${id}` : profile;
+    case "notify": return profile;
   }
 }
-$("#copy").addEventListener("click",async()=>{
-  const v=$("#reflink").value;
-  try{await navigator.clipboard.writeText(v);$("#copy").textContent="Copied";}
-  catch(e){$("#reflink").select();$("#copy").textContent="Select & copy";}
-  setTimeout(()=>$("#copy").textContent="Copy",1600);
+$$("[data-open]").forEach(a => a.href = xLink(a.dataset.open));
+
+// --- step machine ---
+function setStep(n){
+  $$(".step").forEach(s => {
+    const k = +s.dataset.step;
+    s.dataset.state = k < n ? "done" : k === n ? "active" : "locked";
+    const edit = $("[data-edit]", s); if (edit) edit.hidden = !(k < n);
+  });
+  $("#panel").style.setProperty("--fill", `${[0,8,50,92][n] ?? 100}%`);
+  const active = $(`.step[data-step="${n}"]`);
+  if (active && window.innerWidth < 900) active.scrollIntoView({behavior:"smooth", block:"start"});
+}
+$$("[data-edit]").forEach(b => b.addEventListener("click", () => setStep(+b.dataset.edit)));
+
+// --- step 1 ---
+const handleIn = $("#handle");
+handleIn.value = state.handle;
+$("#f1").addEventListener("submit", e => {
+  e.preventDefault();
+  const h = handleIn.value.trim().replace(/^@/, "");
+  const m = $("#m1");
+  if (!X_RE.test(h)) { m.textContent = "Handles are 1–15 letters, numbers or underscores."; m.className = "msg bad"; return; }
+  if (h.toLowerCase() === CONFIG.handle) { m.textContent = "That's our account. Use yours."; m.className = "msg bad"; return; }
+  m.textContent = ""; m.className = "msg";
+  state.handle = h; save();
+  $("#sum1").textContent = "@" + h;
+  setStep(2);
 });
 
-$("#f1").addEventListener("submit",e=>{
-  e.preventDefault();
-  const v=$("#xh").value.trim().replace(/^@/,"");
-  if(!/^[A-Za-z0-9_]{1,15}$/.test(v)){$("#e1").textContent="Use your X handle: letters, numbers or _ (max 15).";return}
-  $("#e1").textContent=""; S.x=v; store.set(S); render();
+// --- step 2 ---
+function paintTasks(){
+  $$(".task").forEach(li => li.classList.toggle("done", state.tasks.has(li.dataset.task)));
+  const n = TASKS.filter(t => state.tasks.has(t)).length;
+  $("#b2").disabled = n < TASKS.length;
+  $("#sum2").textContent = n === TASKS.length ? "All done" : `${n} of ${TASKS.length} done`;
+}
+$$(".task").forEach(li => {
+  const open = $("[data-open]", li), done = $("[data-done]", li);
+  open.addEventListener("click", () => { setTimeout(() => { done.hidden = false; }, 900); });
+  done.addEventListener("click", () => { state.tasks.add(li.dataset.task); save(); paintTasks(); });
 });
-$("#tasks").addEventListener("click",e=>{
-  const o=e.target.closest("[data-o]"), c=e.target.closest("[data-c]");
-  if(o){opened[o.dataset.o]=true; window.open(intent[o.dataset.o](),"_blank","noopener"); setTimeout(renderTasks,300);}
-  if(c){S.done[c.dataset.c]=true; store.set(S); render();}
+$("#b2").addEventListener("click", () => {
+  if (TASKS.some(t => !state.tasks.has(t))) { $("#m2").textContent = "Finish every task first."; $("#m2").className="msg bad"; return; }
+  setStep(3);
 });
-$("#f3").addEventListener("submit",async e=>{
-  e.preventDefault();
-  const w=$("#evm").value.trim();
-  if(!/^0x[a-fA-F0-9]{40}$/.test(w)){$("#e3").textContent="That's not a valid EVM address. It starts with 0x and has 40 hex characters.";return}
-  $("#e3").textContent="";
-  if(CONFIG.api){
-    const label=$("#b3").textContent;
-    $("#b3").disabled=true;$("#b3").textContent="Saving…";
-    let j=null;
-    try{
-      const r=await fetch(CONFIG.api+"/submit",{method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({x:S.x,wallet:w,ref:(S.ref&&S.ref.toLowerCase()!==S.x.toLowerCase())?S.ref:"",tasks:Object.keys(S.done)})});
-      j=await r.json().catch(()=>null);
-      if(!r.ok||!j||!j.ok){
-        const msg={wallet_taken:"This wallet is already registered with another X account.",bad_wallet:"That's not a valid EVM address.",bad_x:"Your X handle looks wrong. Refresh and enter it again.",tasks_incomplete:"Finish all four quests first.",rate_limited:"Too many tries. Wait a minute and submit again."}[j&&j.error]||"Couldn't save your entry. Try again in a moment.";
-        $("#e3").textContent=msg;$("#b3").disabled=false;$("#b3").textContent=label;return}
-    }catch(err){$("#e3").textContent="Couldn't reach the server. Check your connection and submit again.";$("#b3").disabled=false;$("#b3").textContent=label;return}
-    $("#b3").disabled=false;
-    if(typeof j.refs==="number")S.refs=j.refs;
-  }
-  S.wallet=w; store.set(S); render();
-  $("#s4").scrollIntoView({behavior:"smooth",block:"center"});
-  loadRefs();
-});
-render();
-if(S.wallet)loadRefs();
+paintTasks();
 
-/* pixel smoke background (matches the banner) */
-(function(){
-  const c=$("#sky"),x=c.getContext("2d");
-  const CELL=10, RAMP=[[4,0,15],[10,1,40],[18,3,70],[30,5,110],[49,5,137],[74,16,184],[107,25,227],[138,63,240]];
-  const SQ=["#3b2bd6","#4a10b8","#5b2ee8","#2a1a8f","#6b19e3"];
-  let W,H,img,sq=[],t=0;
-  const perm=new Uint8Array(512);{const p=[...Array(256).keys()];for(let i=255;i>0;i--){const j=Math.random()*(i+1)|0;[p[i],p[j]]=[p[j],p[i]]}for(let i=0;i<512;i++)perm[i]=p[i&255]}
-  const fade=v=>v*v*(3-2*v), h=(i,j)=>perm[(perm[i&255]+j)&511]/255;
-  function noise(X,Y){const i=Math.floor(X),j=Math.floor(Y),fx=fade(X-i),fy=fade(Y-j);
-    const a=h(i,j),b=h(i+1,j),cc=h(i,j+1),d=h(i+1,j+1);return a+(b-a)*fx+(cc-a)*fy+(a-b-cc+d)*fx*fy}
-  function fbm(X,Y){let v=0,a=.5;for(let o=0;o<4;o++){v+=a*noise(X,Y);X*=2;Y*=2;a*=.5}return v}
-  function size(){W=c.width=Math.ceil(innerWidth/CELL);H=c.height=Math.ceil(innerHeight/CELL);img=x.createImageData(W,H);
-    sq=Array.from({length:Math.round(W*H/90)},()=>({x:Math.random()*W,y:Math.random()*H,v:.01+Math.random()*.03,c:SQ[Math.random()*SQ.length|0],s:Math.random()<.3?2:1,a:Math.random()*6}))}
-  function draw(){
-    const d=img.data;
-    for(let y=0;y<H;y++){
-      const ny=y/H;
-      const bottom=Math.max(0,(ny-.45)/.55), top=Math.max(0,(.28-ny)/.28)*.75;
-      for(let X=0;X<W;X++){
-        const nx=X/W, side=Math.abs(nx-.5)*2;
-        const mask=bottom*bottom*1.25+top*side*1.1+side*side*.18;
-        let v=fbm(X*.07+t*.6,y*.09-t*.35)*mask*1.55 - .18;
-        v=Math.max(0,Math.min(.999,v));
-        const col=RAMP[(v*RAMP.length)|0], k=(y*W+X)*4;
-        d[k]=col[0];d[k+1]=col[1];d[k+2]=col[2];d[k+3]=255;
-      }
+// --- step 3 ---
+$("#f3").addEventListener("submit", async e => {
+  e.preventDefault();
+  const w = $("#wallet").value.trim();
+  const m = $("#m3"), b = $("#b3");
+  if (!WALLET_RE.test(w)) { m.textContent = "That doesn't look like an Ethereum address (0x + 40 hex characters)."; m.className="msg bad"; return; }
+  b.disabled = true; m.textContent = "Saving…"; m.className = "msg";
+  try{
+    const r = await fetch(`${CONFIG.api}/submit`, {method:"POST", headers:{"content-type":"application/json"},
+      body: JSON.stringify({ x: state.handle, wallet: w, tasks: [...state.tasks] })});
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) {
+      const err = {
+        bad_x: "Your handle looks off. Go back and fix it.",
+        bad_wallet: "That address was rejected. Check it and try again.",
+        tasks_incomplete: "Finish every task first.",
+        wallet_taken: "This wallet is already linked to a different X account.",
+        rate_limited: "Too many tries. Wait a minute and try again.",
+      }[j.error] || "Something broke on our side. Try again in a moment.";
+      m.textContent = err; m.className = "msg bad"; b.disabled = false; return;
     }
-    x.putImageData(img,0,0);
-    for(const p of sq){p.y-=p.v;if(p.y<-2){p.y=H+1;p.x=Math.random()*W}
-      x.globalAlpha=.35+.4*Math.abs(Math.sin(p.a+=.01));x.fillStyle=p.c;x.fillRect(p.x|0,p.y|0,p.s,p.s)}
-    x.globalAlpha=1;
+    finish(w);
+  }catch{
+    m.textContent = "No connection. Check your network and try again."; m.className="msg bad"; b.disabled = false;
   }
-  size();addEventListener("resize",()=>{size();draw()});
-  const still=matchMedia("(prefers-reduced-motion: reduce)").matches;
-  draw(); if(still)return;
-  let last=0;(function f(ts){if(ts-last>66){t+=.012;draw();last=ts}requestAnimationFrame(f)})(0);
-})();
-</script>
+});
 
+function finish(w){
+  $("#doneHandle").textContent = "@" + state.handle;
+  $("#doneWallet").textContent = w;
+  const text = `Just joined the Liqi access list. @${CONFIG.handle}`;
+  $("#shareBtn").href = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(CONFIG.siteUrl)}`;
+  $("#panel").classList.add("finished");
+  $("#panel").style.setProperty("--fill", "100%");
+  loadCount(true);
+}
+
+// --- resume where the visitor left off ---
+if (state.handle) {
+  $("#sum1").textContent = "@" + state.handle;
+  setStep(TASKS.every(t => state.tasks.has(t)) ? 3 : 2);
+}
+
+// --- live counter ---
+async function loadCount(force){
+  try{
+    const r = await fetch(`${CONFIG.api}/count${force ? "?t=" + Date.now() : ""}`);
+    const j = await r.json();
+    if (typeof j.count === "number") { $("#countNum").textContent = j.count.toLocaleString(); $("#count").hidden = false; }
+  }catch{}
+}
+loadCount();
+
+// --- the one animation: the mark assembles ---
+requestAnimationFrame(() => requestAnimationFrame(() => $("#mark").classList.remove("pre")));
+</script>
 </body>
 </html>

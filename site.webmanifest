@@ -1,12 +1,12 @@
 {
-  "name": "Liqi GTD Mint",
+  "name": "Liqi Access List",
   "short_name": "Liqi",
   "icons": [
     { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }
   ],
-  "theme_color": "#14042a",
-  "background_color": "#14042a",
+  "theme_color": "#07181f",
+  "background_color": "#07181f",
   "display": "standalone",
   "start_url": "/"
 }
