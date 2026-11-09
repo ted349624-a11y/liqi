@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Liqi GTD Mint</title>
+<meta name="description" content="Complete the Liqi spirit quests on X and claim your GTD mint raffle entry.">
+<meta name="theme-color" content="#14042a">
+
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="msapplication-TileColor" content="#14042a">
+<meta name="msapplication-TileImage" content="/assets/mstile-150x150.png">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Liqi GTD Mint">
+<meta property="og:description" content="Complete the spirit quests and claim your GTD raffle entry.">
+<meta property="og:image" content="/assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@liqiely">
+<meta name="twitter:title" content="Liqi GTD Mint">
+<meta name="twitter:description" content="Complete the spirit quests and claim your GTD raffle entry.">
+<meta name="twitter:image" content="/assets/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: a single pixel "quest scroll" — banner on top, three spirits, then one stepped panel (handle → X quests → wallet). Dark-only by choice. */
+:root{
+  --void:#14042a;        /* page ground */
+  --night:#22093f;       /* panel */
+  --dusk:#341062;        /* raised */
+  --line:#4b1d86;        /* pixel borders */
+  --violet:#8b4dff;      /* brand violet */
+  --cyan:#3ff0ff;        /* accent: action */
+  --mint:#29f2b5;        /* done */
+  --pink:#ff3fb4;        /* eyes / alert */
+  --gold:#ffe58f;
+  --ink:#efe6ff;
+  --mute:#a996d2;
+  --f-display:"Pixelify Sans","Courier New",monospace;
+  --f-body:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --px:4px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--void);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px;
+  background-image:radial-gradient(circle at 50% 0%,#2a0b52 0,transparent 60%);
+  overflow-x:hidden}
+#sky{position:fixed;inset:0;z-index:0;pointer-events:none;image-rendering:pixelated;width:100%;height:100%}
+.wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:28px;padding-top:20px}
+
+/* top bar */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{font-family:var(--f-display);font-weight:700;font-size:26px;letter-spacing:.06em;color:var(--ink);display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo i{width:14px;height:14px;background:var(--cyan);box-shadow:4px 4px 0 var(--pink);display:inline-block}
+.xlink{font-family:var(--f-display);font-size:15px;color:var(--cyan);text-decoration:none;border:2px solid var(--line);padding:6px 12px;background:var(--night)}
+.xlink:hover{border-color:var(--cyan)}
+
+/* hero */
+.hero{position:relative;border:var(--px) solid var(--line);background:#0c0218;overflow:hidden;
+  box-shadow:8px 8px 0 #0a0115}
+.hero img{display:block;width:100%;height:auto;image-rendering:pixelated;aspect-ratio:1320/465}
+.hero .tag{position:absolute;left:12px;top:12px;font-family:var(--f-display);font-size:13px;letter-spacing:.12em;
+  background:var(--pink);color:#1a0330;padding:3px 9px;text-transform:uppercase}
+.headline{display:flex;flex-direction:column;gap:8px}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(34px,7vw,58px);line-height:1;margin:0;text-wrap:balance;letter-spacing:.01em}
+h1 .g{color:var(--cyan);text-shadow:4px 4px 0 var(--violet)}
+.lede{margin:0;color:var(--mute);max-width:58ch}
+
+/* spirits */
+.spirits{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.spirit{border:var(--px) solid var(--line);background:var(--night);position:relative}
+.spirit img{display:block;width:100%;height:auto;image-rendering:pixelated;aspect-ratio:1}
+.spirit span{position:absolute;left:0;right:0;bottom:0;font-family:var(--f-display);font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+  background:rgba(20,4,42,.82);padding:4px 8px;display:flex;justify-content:space-between}
+.spirit:nth-child(1) span b{color:var(--cyan)}.spirit:nth-child(2) span b{color:var(--gold)}.spirit:nth-child(3) span b{color:var(--violet)}
+.spirit{animation:bob 3.6s steps(4) infinite}
+.spirit:nth-child(2){animation-delay:-1.2s}.spirit:nth-child(3){animation-delay:-2.4s}
+@keyframes bob{50%{transform:translateY(-6px)}}
+
+/* quest panel */
+.panel{border:var(--px) solid var(--line);background:var(--night);box-shadow:8px 8px 0 #0a0115;display:flex;flex-direction:column}
+.phead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:var(--px) solid var(--line);background:var(--dusk);flex-wrap:wrap}
+.phead h2{font-family:var(--f-display);font-size:22px;margin:0;font-weight:600}
+.meter{display:flex;gap:4px}
+.meter i{width:16px;height:16px;background:#1a0634;border:2px solid var(--line)}
+.meter i.on{background:var(--mint);border-color:var(--mint)}
+.step{padding:20px 18px;border-bottom:2px dashed var(--line);display:flex;flex-direction:column;gap:14px}
+.step:last-child{border-bottom:0}
+.step.locked{opacity:.38;pointer-events:none;filter:saturate(.4)}
+.slabel{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-size:18px}
+.slabel em{font-style:normal;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#1a0330;background:var(--cyan);padding:2px 7px}
+.step.done .slabel em{background:var(--mint)}
+.hint{margin:0;color:var(--mute);font-size:13px}
+
+.field{display:flex;gap:10px;flex-wrap:wrap}
+.input{flex:1 1 220px;min-width:0;display:flex;align-items:center;background:#0f0320;border:3px solid var(--line)}
+.input:focus-within{border-color:var(--cyan)}
+.input b{padding:0 0 0 12px;color:var(--mute);font-weight:500}
+.input input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--ink);font:500 15px var(--f-body);padding:12px}
+.btn{font-family:var(--f-display);font-size:16px;font-weight:600;letter-spacing:.04em;cursor:pointer;border:0;
+  background:var(--cyan);color:#140330;padding:12px 20px;box-shadow:4px 4px 0 var(--violet);transition:transform .08s}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--violet)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--violet)}
+.btn:focus-visible,.task button:focus-visible,.xlink:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.btn[disabled]{background:#3b2763;color:var(--mute);box-shadow:none;cursor:not-allowed;transform:none}
+.err{color:var(--pink);font-size:13px;margin:0;min-height:1em}
+.who{font-family:var(--f-display);color:var(--cyan)}
+
+/* tasks */
+.tasks{display:grid;gap:10px}
+.task{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:14px;background:#180530;border:3px solid var(--line);padding:10px 12px}
+.task.ok{border-color:var(--mint)}
+.ico{width:44px;height:44px;display:grid;place-items:center;background:var(--dusk);image-rendering:pixelated}
+.ico svg{width:24px;height:24px;fill:var(--ink)}
+.task.ok .ico{background:var(--mint)}.task.ok .ico svg{fill:#0d2a20}
+.tt{min-width:0}
+.tt strong{display:block;font-family:var(--f-display);font-size:17px;font-weight:600}
+.tt small{display:block;color:var(--mute);font-size:12.5px}
+.task button{font-family:var(--f-display);font-size:14px;font-weight:600;cursor:pointer;border:2px solid var(--cyan);background:transparent;color:var(--cyan);padding:8px 12px;white-space:nowrap}
+.task button.confirm{background:var(--gold);border-color:var(--gold);color:#2a1700}
+.task.tlock{opacity:.4;filter:saturate(.3)}
+.task button.lock{border-color:var(--line);color:var(--mute);cursor:not-allowed}
+.task button.fin{border-color:var(--mint);color:var(--mint);cursor:default}
+
+/* ticket */
+.ticket{border:var(--px) solid var(--mint);background:linear-gradient(135deg,#0f3030,#1b0b3c);display:flex;flex-direction:column;position:relative;box-shadow:6px 6px 0 #0a0115}
+.tk-top{display:grid;grid-template-columns:120px 1fr;gap:18px;align-items:center;padding:16px}
+.tk-top img{width:120px;max-width:100%;height:auto;image-rendering:pixelated;border:3px solid var(--line)}
+.tk-main small{font-family:var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:var(--mint);font-size:13px}
+.tk-count{font-family:var(--f-display);font-weight:700;line-height:.9;display:flex;align-items:baseline;gap:4px;color:var(--ink)}
+.tk-count span{font-size:34px;color:var(--pink)}.tk-count b{font-size:clamp(56px,14vw,84px);text-shadow:4px 4px 0 var(--violet)}
+.tk-main p{margin:4px 0 0;font-family:var(--f-display);font-size:18px}
+.tk-meta{margin:0;padding:12px 16px;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13px;border-top:2px dashed var(--mint)}
+.tk-meta dt{color:var(--mute);text-transform:uppercase;letter-spacing:.1em;font-size:11px;align-self:center}
+.tk-meta dd{margin:0;word-break:break-all;font-variant-numeric:tabular-nums}
+.tk-ref{padding:14px 16px 16px;border-top:2px dashed var(--mint);display:flex;flex-direction:column;gap:10px}
+.tk-ref label{font-size:13px;color:var(--mute)}.tk-ref label b{color:var(--gold)}
+.tk-ref input{font-size:13px}
+.share{align-self:flex-start;font-family:var(--f-display);color:var(--cyan);text-decoration:none;border:2px solid var(--cyan);padding:6px 12px}
+/* pass */
+.pass{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center;border:var(--px) solid var(--mint);background:#0f2a2a;padding:16px;
+  background:linear-gradient(135deg,#123232,#1b0b3c)}
+.pass img{width:150px;max-width:100%;height:auto;image-rendering:pixelated;border:3px solid var(--line)}
+.pass h3{font-family:var(--f-display);font-size:26px;margin:0 0 4px;color:var(--mint)}
+.pass dl{margin:8px 0 0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px}
+.pass dt{color:var(--mute);text-transform:uppercase;letter-spacing:.1em;font-size:11px;align-self:center}
+.pass dd{margin:0;word-break:break-all;font-variant-numeric:tabular-nums}
+.foot{color:var(--mute);font-size:12px;text-align:center}
+.foot a{color:var(--cyan)}
+
+@media (max-width:520px){
+  .spirits{gap:8px}.spirit span{font-size:10px;padding:3px 5px}
+  .task{grid-template-columns:40px 1fr;}.task button{grid-column:1/-1}
+  .ico{width:40px;height:40px}
+  .tk-top{grid-template-columns:84px 1fr;gap:12px}.tk-top img{width:84px}
+}
+@media (prefers-reduced-motion:reduce){.spirit{animation:none}#sky{display:none}}
+</style>
+
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="wrap">
+  <header class="bar">
+    <a class="logo" href="https://x.com/liqiely" target="_blank" rel="noopener"><i></i>LIQI</a>
+    <a class="xlink" href="https://x.com/liqiely" target="_blank" rel="noopener">@liqiely ↗</a>
+  </header>
+
+  <div class="hero">
+    <img src="assets/banner.webp" alt="Violet Liqi spirit drifting through pixel smoke">
+    <span class="tag">GTD Whitelist</span>
+  </div>
+
+  <section class="headline">
+    <h1>Claim your <span class="g">GTD</span> mint spot</h1>  </section>
+
+  <div class="spirits" aria-label="Liqi spirits">
+    <div class="spirit"><img src="assets/cyan.png" alt="Cyan Liqi spirit"><span><b>Frost</b>#001</span></div>
+    <div class="spirit"><img src="assets/gold.png" alt="Gold Liqi spirit"><span><b>Ember</b>#002</span></div>
+    <div class="spirit"><img src="assets/violet.png" alt="Violet Liqi spirit"><span><b>Haze</b>#003</span></div>
+  </div>
+
+  <section class="panel" aria-label="GTD quest">
+    <div class="phead">
+      <h2>Spirit Quest</h2>
+      <div class="meter" id="meter" aria-label="Progress"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+
+    <!-- step 1 -->
+    <div class="step" id="s1">
+      <div class="slabel"><em>Step 1</em>Your X handle</div>
+      <form class="field" id="f1" novalidate>
+        <label class="input" for="xh"><b>@</b><input id="xh" autocomplete="off" spellcheck="false" placeholder="username" maxlength="15"></label>
+        <button class="btn" type="submit">Continue</button>
+      </form>
+      <p class="err" id="e1" role="alert"></p>
+    </div>
+
+    <!-- step 2 -->
+    <div class="step" id="s2" hidden>
+      <div class="slabel"><em>Step 2</em>Quests on X <span class="who" id="who"></span></div>
+      <p class="hint">Do the action on X, come back and tap <b>Confirm</b>. Write your reply yourself.</p>
+      <div class="tasks" id="tasks"></div>
+    </div>
+
+    <!-- step 3 -->
+    <div class="step" id="s3" hidden>
+      <div class="slabel"><em>Step 3</em>EVM wallet</div>
+      <form class="field" id="f3" novalidate>
+        <label class="input" for="evm"><input id="evm" autocomplete="off" spellcheck="false" placeholder="0x…" maxlength="42"></label>
+        <button class="btn" type="submit" id="b3">Submit</button>
+      </form>
+      <p class="err" id="e3" role="alert"></p>
+    </div>
+
+    <!-- ticket -->
+    <div class="step" id="s4" hidden>
+      <div class="ticket">
+        <div class="tk-top">
+          <img id="pimg" src="assets/cyan.png" alt="Your Liqi spirit">
+          <div class="tk-main">
+            <small>GTD Raffle</small>
+            <div class="tk-count"><span>x</span><b id="tcount">1</b></div>
+            <p id="tline">GTD raffle entry</p>
+          </div>
+        </div>
+        <dl class="tk-meta">
+          <dt>X</dt><dd id="px"></dd>
+          <dt>Wallet</dt><dd id="pw"></dd>
+          <dt>Refs</dt><dd id="pr">0</dd>
+        </dl>
+        <div class="tk-ref">
+          <label for="reflink">Your referral link · every ref = <b>+x1 entry</b></label>
+          <div class="field">
+            <div class="input"><input id="reflink" readonly></div>
+            <button class="btn" type="button" id="copy">Copy</button>
+          </div>
+          <a class="share" id="share" target="_blank" rel="noopener">Share on X ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">Liqi never asks for your seed phrase or a wallet signature here. Only follow <a href="https://x.com/liqiely" target="_blank" rel="noopener">@liqiely</a>.</p>
+</div>
+
+<script>
+/* ===== CONFIG — edit these ===== */
+const CONFIG = {
+  handle: "liqiely",
+  tweetId: "",          // ID of the GTD announcement post, e.g. "1855555555555555555". Empty = Like/RT/Reply open the profile.
+  submitUrl: "",        // Google Apps Script web app URL (see apps-script.gs). Saves entries + counts referrals.
+  siteUrl: ""           // Your live site URL for referral links, e.g. "https://liqi-gtd.vercel.app". Empty = current page.
+};
+/* ================================ */
+
+const IMG = {cyan:"assets/cyan.png",gold:"assets/gold.png",violet:"assets/violet.png"};
+const $ = s => document.querySelector(s);
+const store = {
+  get(){try{return JSON.parse(localStorage.getItem("liqi-gtd")||"{}")}catch(e){return {}}},
+  set(v){try{localStorage.setItem("liqi-gtd",JSON.stringify(v))}catch(e){}}
+};
+let S = Object.assign({x:"",done:{},wallet:"",ref:"",refs:0}, store.get());
+try{const r=new URLSearchParams(location.search).get("ref");if(r&&/^[A-Za-z0-9_]{1,15}$/.test(r)&&!S.wallet){S.ref=r;store.set(S)}}catch(e){}
+
+const ICONS = {
+  follow:'<svg viewBox="0 0 8 8"><path d="M3 0h2v1h1v2H5v1H3V3H2V1h1zM1 5h6v1h1v2H0V6h1z"/></svg>',
+  like:'<svg viewBox="0 0 8 8"><path d="M1 1h2v1h2V1h2v1h1v2H7v1H6v1H5v1H3V6H2V5H1V4H0V2h1z"/></svg>',
+  rt:'<svg viewBox="0 0 8 8"><path d="M1 1h5v1h1v3h1v1H6v1H5V6H4V5h2V2H2v1H1zM2 4v1h1v1H2v1H1V4zM3 6h4v1H3z"/></svg>',
+  reply:'<svg viewBox="0 0 8 8"><path d="M0 1h8v5H4L2 8V6H0zM1 2v3h2v1l1-1h3V2z"/></svg>'
+};
+const intent = {
+  follow:()=>`https://x.com/intent/follow?screen_name=${CONFIG.handle}`,
+  like:()=>CONFIG.tweetId?`https://x.com/intent/like?tweet_id=${CONFIG.tweetId}`:`https://x.com/${CONFIG.handle}`,
+  rt:()=>CONFIG.tweetId?`https://x.com/intent/retweet?tweet_id=${CONFIG.tweetId}`:`https://x.com/${CONFIG.handle}`,
+  reply:()=>CONFIG.tweetId?`https://x.com/intent/post?in_reply_to=${CONFIG.tweetId}`:`https://x.com/${CONFIG.handle}`
+};
+const TASKS = [
+  {id:"follow",t:"Follow @liqiely",d:"Join the spirits on X"},
+  {id:"like",t:"Like the GTD post",d:"Tap the heart on the announcement"},
+  {id:"rt",t:"Repost the GTD post",d:"Spread it to your timeline"},
+  {id:"reply",t:"Reply in your own words",d:"Opens an empty reply box — you write it"}
+];
+const opened = {};
+
+function spiritFor(x){let h=0;for(const c of x.toLowerCase())h=(h*31+c.charCodeAt(0))>>>0;return ["cyan","gold","violet"][h%3]}
+const NAMES={cyan:"Frost",gold:"Ember",violet:"Haze"};
+
+function renderTasks(){
+  $("#tasks").innerHTML = TASKS.map((t,i)=>{
+    const ok=S.done[t.id], open=opened[t.id];
+    const locked = i>0 && !TASKS.slice(0,i).every(p=>S.done[p.id]);
+    if(locked||ok) return "";
+    const btn = ok?`<button class="fin" disabled>Done ✓</button>`
+      : open?`<button class="confirm" data-c="${t.id}">Confirm</button>`
+      : `<button data-o="${t.id}">Open on X ↗</button>`;
+    return `<div class="task ${ok?'ok':''} ${locked?'tlock':''}"><div class="ico">${ICONS[t.id]}</div><div class="tt"><strong>${t.t}</strong><small>${t.d}</small></div>${btn}</div>`;
+  }).join("");
+}
+function refLink(){const base=CONFIG.siteUrl||(location.origin+location.pathname);return base+"?ref="+encodeURIComponent(S.x)}
+async function loadRefs(){
+  if(!CONFIG.submitUrl||!S.x)return;
+  try{const r=await fetch(CONFIG.submitUrl+"?x="+encodeURIComponent(S.x));const j=await r.json();
+    if(typeof j.refs==="number"){S.refs=j.refs;store.set(S);render()}}catch(e){}
+}
+function render(){
+  const hasX=!!S.x, allDone=TASKS.every(t=>S.done[t.id]), fin=!!S.wallet;
+  $("#s1").hidden=hasX;
+  $("#s2").hidden=!hasX||allDone;
+  $("#s3").hidden=!(hasX&&allDone)||fin;
+  $("#s4").hidden=!fin;
+  const cur=Math.min(TASKS.filter(t=>S.done[t.id]).length+1,TASKS.length);
+  $("#who").textContent=hasX?`${cur}/${TASKS.length} · @${S.x}`:"";
+  renderTasks();
+  const n=(hasX?1:0)+TASKS.filter(t=>S.done[t.id]).length+(fin?1:0);
+  document.querySelectorAll("#meter i").forEach((el,i)=>el.classList.toggle("on",i<n));
+  if(fin){
+    const k=spiritFor(S.x),total=1+(S.refs||0);
+    $("#pimg").src=IMG[k];$("#px").textContent="@"+S.x;$("#pw").textContent=S.wallet;$("#pr").textContent=S.refs||0;
+    $("#tcount").textContent=total;
+    $("#tline").textContent=total===1?"GTD raffle entry":"GTD raffle entries";
+    const link=refLink();$("#reflink").value=link;
+    $("#share").href="https://x.com/intent/post?text="+encodeURIComponent("I just got my GTD raffle entry for @"+CONFIG.handle+" 👻\n\nGet yours:")+"&url="+encodeURIComponent(link);
+  }
+}
+$("#copy").addEventListener("click",async()=>{
+  const v=$("#reflink").value;
+  try{await navigator.clipboard.writeText(v);$("#copy").textContent="Copied";}
+  catch(e){$("#reflink").select();$("#copy").textContent="Select & copy";}
+  setTimeout(()=>$("#copy").textContent="Copy",1600);
+});
+
+$("#f1").addEventListener("submit",e=>{
+  e.preventDefault();
+  const v=$("#xh").value.trim().replace(/^@/,"");
+  if(!/^[A-Za-z0-9_]{1,15}$/.test(v)){$("#e1").textContent="Use your X handle: letters, numbers or _ (max 15).";return}
+  $("#e1").textContent=""; S.x=v; store.set(S); render();
+});
+$("#tasks").addEventListener("click",e=>{
+  const o=e.target.closest("[data-o]"), c=e.target.closest("[data-c]");
+  if(o){opened[o.dataset.o]=true; window.open(intent[o.dataset.o](),"_blank","noopener"); setTimeout(renderTasks,300);}
+  if(c){S.done[c.dataset.c]=true; store.set(S); render();}
+});
+$("#f3").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const w=$("#evm").value.trim();
+  if(!/^0x[a-fA-F0-9]{40}$/.test(w)){$("#e3").textContent="That's not a valid EVM address. It starts with 0x and has 40 hex characters.";return}
+  $("#e3").textContent="";
+  if(CONFIG.submitUrl){
+    $("#b3").disabled=true;$("#b3").textContent="Saving…";
+    try{await fetch(CONFIG.submitUrl,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify({x:S.x,wallet:w,ref:(S.ref&&S.ref.toLowerCase()!==S.x.toLowerCase())?S.ref:"",tasks:Object.keys(S.done),ts:new Date().toISOString()})});}
+    catch(err){$("#e3").textContent="Couldn't reach the server. Check your connection and submit again.";$("#b3").disabled=false;$("#b3").textContent="Submit";return}
+    $("#b3").disabled=false;
+  }
+  S.wallet=w; store.set(S); render();
+  $("#s4").scrollIntoView({behavior:"smooth",block:"center"});
+  loadRefs();
+});
+render();
+if(S.wallet)loadRefs();
+
+/* pixel embers */
+(function(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const c=$("#sky"),x=c.getContext("2d");let W,H,P=[];
+  const cols=["#3ff0ff","#8b4dff","#ff3fb4","#29f2b5","#4b1d86"];
+  function size(){W=c.width=Math.ceil(innerWidth/6);H=c.height=Math.ceil(innerHeight/6);
+    P=Array.from({length:Math.round(W*H/180)},()=>({x:Math.random()*W,y:Math.random()*H,v:.05+Math.random()*.15,c:cols[Math.random()*cols.length|0],a:Math.random()}))}
+  size();addEventListener("resize",size);
+  (function f(){x.clearRect(0,0,W,H);for(const p of P){p.y-=p.v;if(p.y<0){p.y=H;p.x=Math.random()*W}
+    x.globalAlpha=.25+.35*Math.abs(Math.sin((p.a+=.01)));x.fillStyle=p.c;x.fillRect(p.x|0,p.y|0,1,1)}requestAnimationFrame(f)})();
+})();
+</script>
+
+</body>
+</html>
