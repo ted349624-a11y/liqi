@@ -145,6 +145,11 @@ h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spaci
 
 /* task rows */
 .tasks{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.task:not(.current){display:none}
+.progress{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:0 0 12px}
+.progress i{display:block;height:4px;background:var(--line)}
+.progress i.on{background:var(--mint)}
+.task .ok{display:none}
 .task{display:grid;grid-template-columns:1fr auto;gap:8px 14px;align-items:center;background:var(--ink);border:1px solid var(--line);padding:12px 14px}
 .task.done{border-color:var(--mint-2)}
 .task .t{font-weight:600}
@@ -152,8 +157,6 @@ h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spaci
 .task .act{grid-row:1 / span 2;display:flex;gap:8px;align-items:center}
 .task a.btn,.task button.btn{padding:10px 14px;font-size:14px}
 .task .ok{display:none;color:var(--mint);font-weight:600;padding:0 6px}
-.task.done .ok{display:inline}
-.task.done .act .btn{display:none}
 @media (max-width:460px){
   .summary{max-width:12ch}
   .task{grid-template-columns:1fr}
@@ -214,6 +217,7 @@ footer a:hover{color:var(--mint)}
           <div class="step-h"><span class="num">2</span><h2>Tasks on X</h2><span class="summary" id="sum2"></span><button class="edit" type="button" data-edit="2" hidden>Change</button></div>
           <div class="body">
             <p class="hint">Each button opens X in a new tab. Come back and mark it done. The reply is yours to write — no copy-paste text from us.</p>
+            <div class="progress" id="progress" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
             <ul class="tasks" id="tasks">
               <li class="task" data-task="follow">
                 <span class="t">Follow @liqiely</span>
@@ -242,7 +246,7 @@ footer a:hover{color:var(--mint)}
               </li>
             </ul>
             <p class="msg" id="m2"></p>
-            <button class="btn wide" type="button" id="b2" disabled>Continue</button>
+            <button class="btn wide" type="button" id="b2" disabled hidden>Continue</button>
           </div>
         </article>
 
@@ -296,10 +300,12 @@ const $$ = (s, r=document) => [...r.querySelectorAll(s)];
 const state = {
   handle: localStorage.getItem("liqi.handle") || "",
   tasks: new Set(JSON.parse(localStorage.getItem("liqi.tasks") || "[]")),
+  wallet: localStorage.getItem("liqi.wallet") || "",
 };
 const save = () => {
   localStorage.setItem("liqi.handle", state.handle);
   localStorage.setItem("liqi.tasks", JSON.stringify([...state.tasks]));
+  if (state.wallet) localStorage.setItem("liqi.wallet", state.wallet);
 };
 
 // --- links ---
@@ -346,15 +352,17 @@ $("#f1").addEventListener("submit", e => {
 
 // --- step 2 ---
 function paintTasks(){
-  $$(".task").forEach(li => li.classList.toggle("done", state.tasks.has(li.dataset.task)));
-  const n = TASKS.filter(t => state.tasks.has(t)).length;
-  $("#b2").disabled = n < TASKS.length;
-  $("#sum2").textContent = n === TASKS.length ? "All done" : `${n} of ${TASKS.length} done`;
+  const done = TASKS.filter(t => state.tasks.has(t));
+  const next = TASKS.find(t => !state.tasks.has(t));
+  $$(".task").forEach(li => li.classList.toggle("current", li.dataset.task === next));
+  $$("#progress i").forEach((seg, i) => seg.classList.toggle("on", i < done.length));
+  $("#b2").disabled = !!next;
+  $("#sum2").textContent = next ? `${done.length} of ${TASKS.length} done` : "All done";
 }
 $$(".task").forEach(li => {
   const open = $("[data-open]", li), done = $("[data-done]", li);
   open.addEventListener("click", () => { setTimeout(() => { done.hidden = false; }, 900); });
-  done.addEventListener("click", () => { state.tasks.add(li.dataset.task); save(); paintTasks(); });
+  done.addEventListener("click", () => { state.tasks.add(li.dataset.task); save(); paintTasks(); if (TASKS.every(t => state.tasks.has(t))) setStep(3); });
 });
 $("#b2").addEventListener("click", () => {
   if (TASKS.some(t => !state.tasks.has(t))) { $("#m2").textContent = "Finish every task first."; $("#m2").className="msg bad"; return; }
@@ -390,6 +398,7 @@ $("#f3").addEventListener("submit", async e => {
 });
 
 function finish(w){
+  state.wallet = w; save();
   $("#doneHandle").textContent = "@" + state.handle;
   $("#doneWallet").textContent = w;
   const text = `Reserved my $35 Liqi welcome bonus. @${CONFIG.handle}`;
@@ -400,7 +409,10 @@ function finish(w){
 }
 
 // --- resume where the visitor left off ---
-if (state.handle) {
+if (state.handle && state.wallet) {
+  $("#sum1").textContent = "@" + state.handle;
+  finish(state.wallet);
+} else if (state.handle) {
   $("#sum1").textContent = "@" + state.handle;
   setStep(TASKS.every(t => state.tasks.has(t)) ? 3 : 2);
 }
