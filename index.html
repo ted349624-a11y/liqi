@@ -54,6 +54,8 @@
   --on:#07181f;         /* text on accent fills */
   --mint-h:#a9ffe8;     /* accent hover */
   --ph:#4b6b65;         /* placeholder */
+  --plate-a:#17434f; --plate-b:#0b2831; --plate-h:rgba(144,251,221,.07); --plate-e:rgba(255,255,255,.14);
+  --cap-a:#c4fff1; --cap-g:rgba(144,251,221,.08);
   --pool:rgba(144,251,221,.10);
   --hatch:rgba(144,251,221,.045);
   --f:"Chakra Petch",system-ui,sans-serif;
@@ -67,6 +69,8 @@
   --mint:#62e6c2; --mint-2:#33c6a0; --mint-h:#7ff0d1;
   --ice:#07181f; --mute:#4c6e66; --bad:#c43a3a;
   --acc:#0a7a63; --ph:#8fb0a7;
+  --plate-a:#e3f2ec; --plate-b:#bcdacf; --plate-h:rgba(7,24,31,.06); --plate-e:rgba(255,255,255,.9);
+  --cap-a:#b4f8e5; --cap-g:rgba(10,122,99,.07);
   --pool:rgba(98,230,194,.30); --hatch:rgba(7,24,31,.05);
   color-scheme:light;
 }
@@ -151,37 +155,48 @@ h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spaci
 .msg.bad{color:var(--bad)}
 .msg.ok{color:var(--acc)}
 
-/* buttons: a blister pack. Embossed foil plate, and the label sits in a
-   pressed-plastic capsule that pops flat when you push it. */
+/* buttons: a capsule seated in a chamfered plate. Plate and capsule use the
+   site's own teal and mint; a band of light crosses the capsule at the
+   logo's angle, and the capsule sinks and springs back when pressed. */
 .btn{--rim:5px;position:relative;isolation:isolate;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:10px;
-  padding:calc(13px + var(--rim)) calc(24px + var(--rim));border:0;border-radius:14px;cursor:pointer;
-  color:#07181f;font-weight:700;font-size:16px;letter-spacing:.01em;-webkit-tap-highlight-color:transparent;
+  padding:calc(13px + var(--rim)) calc(24px + var(--rim));border:0;cursor:pointer;
+  color:var(--on);font-weight:700;font-size:16px;letter-spacing:.01em;-webkit-tap-highlight-color:transparent;
   background:
-    repeating-linear-gradient(45deg,rgba(255,255,255,.38) 0 1px,transparent 1px 4px),
-    repeating-linear-gradient(-45deg,rgba(0,0,0,.09) 0 1px,transparent 1px 4px),
-    linear-gradient(135deg,#f4f7f8 0%,#c6ced2 22%,#eef2f3 41%,#a9b4b9 60%,#e2e7e9 79%,#b8c2c6 100%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.8),inset 0 -1px 0 rgba(0,0,0,.28),0 2px 6px rgba(0,0,0,.35)}
+    repeating-linear-gradient(109deg,var(--plate-h) 0 1px,transparent 1px 5px),
+    linear-gradient(var(--plate-a),var(--plate-b));
+  box-shadow:inset 0 1px 0 var(--plate-e);
+  clip-path:polygon(var(--c-s) 0,100% 0,100% calc(100% - var(--c-s)),calc(100% - var(--c-s)) 100%,0 100%,0 var(--c-s))}
 .btn::before{ /* the capsule */
   content:"";position:absolute;inset:var(--rim);z-index:-1;border-radius:999px;
-  background:linear-gradient(#bdfff0 0%,#7cecca 48%,#3fc7a3 100%);
-  box-shadow:0 0 0 1.5px rgba(255,255,255,.6),0 3px 4px rgba(0,0,0,.38),inset 0 2px 2px rgba(255,255,255,.75),inset 0 -4px 6px rgba(0,70,52,.38);
-  transition:transform .12s ease,box-shadow .12s ease,filter .12s ease}
-.btn::after{ /* light catching the plastic */
-  content:"";position:absolute;z-index:-1;left:calc(var(--rim) + 12px);right:calc(var(--rim) + 12px);top:calc(var(--rim) + 2px);height:36%;border-radius:999px;pointer-events:none;
-  background:linear-gradient(rgba(255,255,255,.8),rgba(255,255,255,0));transition:opacity .12s ease}
-.btn:hover::before{filter:brightness(1.06) saturate(1.08)}
-.btn:active::before{transform:translateY(1px) scale(.985);
-  box-shadow:0 0 0 1.5px rgba(255,255,255,.5),0 1px 1px rgba(0,0,0,.3),inset 0 3px 5px rgba(0,70,52,.4),inset 0 -1px 1px rgba(255,255,255,.4)}
-.btn:active::after{opacity:.25}
-.btn[disabled]{color:#6b787d;cursor:not-allowed}
-.btn[disabled]::before{ /* an empty pocket */
-  background:linear-gradient(rgba(255,255,255,.35),rgba(120,135,141,.25));filter:none;
-  box-shadow:0 0 0 1.5px rgba(255,255,255,.5),inset 0 2px 4px rgba(0,0,0,.22),inset 0 -1px 1px rgba(255,255,255,.5)}
-.btn[disabled]::after{opacity:.3}
-.btn.ghost::before{ /* clear plastic, nothing inside */
-  background:linear-gradient(rgba(255,255,255,.6),rgba(255,255,255,.1) 60%,rgba(0,0,0,.06));
-  box-shadow:0 0 0 1.5px rgba(255,255,255,.65),0 2px 3px rgba(0,0,0,.3),inset 0 2px 2px rgba(255,255,255,.8),inset 0 -3px 5px rgba(0,0,0,.16)}
-@media (prefers-reduced-motion:reduce){.btn::before,.btn::after{transition:none}}
+  background:linear-gradient(var(--cap-a) 0%,var(--mint) 50%,var(--mint-2) 100%);
+  box-shadow:0 3px 5px rgba(0,0,0,.4),inset 0 1.5px 1px rgba(255,255,255,.7),inset 0 -4px 6px rgba(0,70,52,.35);
+  transition:transform .28s cubic-bezier(.3,1.7,.5,1),box-shadow .15s ease,filter .15s ease}
+.btn::after{ /* gloss + travelling light */
+  content:"";position:absolute;inset:var(--rim);z-index:-1;border-radius:999px;pointer-events:none;
+  background:
+    linear-gradient(109deg,transparent 42%,rgba(255,255,255,.75) 50%,transparent 58%) 170% 0 / 260% 100% no-repeat,
+    linear-gradient(rgba(255,255,255,.5),rgba(255,255,255,0) 46%);
+  animation:sheen 3.8s ease-in-out infinite;
+  transition:transform .28s cubic-bezier(.3,1.7,.5,1)}
+@keyframes sheen{0%{background-position:170% 0,0 0}36%,100%{background-position:-70% 0,0 0}}
+.btn:hover::before{filter:brightness(1.07) saturate(1.1)}
+.btn:active::before,.btn:active::after{transform:translateY(2px) scale(.975);transition-duration:.06s}
+.btn:active::before{box-shadow:0 1px 1px rgba(0,0,0,.3),inset 0 3px 6px rgba(0,70,52,.45),inset 0 -1px 1px rgba(255,255,255,.35)}
+.btn[disabled]{color:var(--mute);cursor:not-allowed}
+.btn[disabled]::before{background:var(--line);filter:none;box-shadow:inset 0 2px 4px rgba(0,0,0,.25)}
+.btn[disabled]::after{animation:none;opacity:.25}
+.btn.ghost{color:var(--ice)}
+.btn.ghost::before{background:var(--cap-g);box-shadow:inset 0 0 0 1.5px var(--acc),inset 0 -3px 5px rgba(0,0,0,.14)}
+.btn.ghost::after{animation:none;opacity:.55}
+.btn.ghost:hover::after{animation:sheen 1.1s ease-out 1;opacity:1}
+/* the next task slides into the place of the finished one */
+.task.current{animation:taskin .38s cubic-bezier(.2,.9,.3,1)}
+@keyframes taskin{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}
+.progress i{transition:background-color .35s ease}
+@media (prefers-reduced-motion:reduce){
+  .btn::before,.btn::after{transition:none;animation:none}
+  .task.current{animation:none}
+}
 .btn.wide{width:100%;margin-top:14px}
 
 /* task rows */
@@ -196,7 +211,7 @@ h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spaci
 .task .t{font-weight:600;grid-column:1}
 .task .d{color:var(--mute);font-size:14px;grid-column:1}
 .task .act{grid-column:2;grid-row:1 / span 2;display:flex;gap:8px;align-items:center}
-.task a.btn,.task button.btn{--rim:4px;padding:calc(8px + var(--rim)) calc(16px + var(--rim));font-size:14px;border-radius:12px}
+.task a.btn,.task button.btn{--rim:4px;padding:calc(8px + var(--rim)) calc(16px + var(--rim));font-size:14px;}
 .task .ok{display:none;color:var(--acc);font-weight:600;padding:0 6px}
 @media (max-width:460px){
   .summary{max-width:12ch}
