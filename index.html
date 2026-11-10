@@ -151,14 +151,37 @@ h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spaci
 .msg.bad{color:var(--bad)}
 .msg.ok{color:var(--acc)}
 
-.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 22px;border:0;cursor:pointer;
-  background:var(--mint);color:var(--on);font-weight:700;font-size:16px;letter-spacing:.01em;
-  clip-path:polygon(var(--c-s) 0,100% 0,100% calc(100% - var(--c-s)),calc(100% - var(--c-s)) 100%,0 100%,0 var(--c-s))}
-.btn:hover{background:var(--mint-h)}
-.btn:active{background:var(--mint-2)}
-.btn[disabled]{background:var(--line);color:var(--mute);cursor:not-allowed}
-.btn.ghost{background:transparent;color:var(--acc);box-shadow:inset 0 0 0 1px var(--line)}
-.btn.ghost:hover{box-shadow:inset 0 0 0 1px var(--acc)}
+/* buttons: a blister pack. Embossed foil plate, and the label sits in a
+   pressed-plastic capsule that pops flat when you push it. */
+.btn{--rim:5px;position:relative;isolation:isolate;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:calc(13px + var(--rim)) calc(24px + var(--rim));border:0;border-radius:14px;cursor:pointer;
+  color:#07181f;font-weight:700;font-size:16px;letter-spacing:.01em;-webkit-tap-highlight-color:transparent;
+  background:
+    repeating-linear-gradient(45deg,rgba(255,255,255,.38) 0 1px,transparent 1px 4px),
+    repeating-linear-gradient(-45deg,rgba(0,0,0,.09) 0 1px,transparent 1px 4px),
+    linear-gradient(135deg,#f4f7f8 0%,#c6ced2 22%,#eef2f3 41%,#a9b4b9 60%,#e2e7e9 79%,#b8c2c6 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8),inset 0 -1px 0 rgba(0,0,0,.28),0 2px 6px rgba(0,0,0,.35)}
+.btn::before{ /* the capsule */
+  content:"";position:absolute;inset:var(--rim);z-index:-1;border-radius:999px;
+  background:linear-gradient(#bdfff0 0%,#7cecca 48%,#3fc7a3 100%);
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.6),0 3px 4px rgba(0,0,0,.38),inset 0 2px 2px rgba(255,255,255,.75),inset 0 -4px 6px rgba(0,70,52,.38);
+  transition:transform .12s ease,box-shadow .12s ease,filter .12s ease}
+.btn::after{ /* light catching the plastic */
+  content:"";position:absolute;z-index:-1;left:calc(var(--rim) + 12px);right:calc(var(--rim) + 12px);top:calc(var(--rim) + 2px);height:36%;border-radius:999px;pointer-events:none;
+  background:linear-gradient(rgba(255,255,255,.8),rgba(255,255,255,0));transition:opacity .12s ease}
+.btn:hover::before{filter:brightness(1.06) saturate(1.08)}
+.btn:active::before{transform:translateY(1px) scale(.985);
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.5),0 1px 1px rgba(0,0,0,.3),inset 0 3px 5px rgba(0,70,52,.4),inset 0 -1px 1px rgba(255,255,255,.4)}
+.btn:active::after{opacity:.25}
+.btn[disabled]{color:#6b787d;cursor:not-allowed}
+.btn[disabled]::before{ /* an empty pocket */
+  background:linear-gradient(rgba(255,255,255,.35),rgba(120,135,141,.25));filter:none;
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.5),inset 0 2px 4px rgba(0,0,0,.22),inset 0 -1px 1px rgba(255,255,255,.5)}
+.btn[disabled]::after{opacity:.3}
+.btn.ghost::before{ /* clear plastic, nothing inside */
+  background:linear-gradient(rgba(255,255,255,.6),rgba(255,255,255,.1) 60%,rgba(0,0,0,.06));
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.65),0 2px 3px rgba(0,0,0,.3),inset 0 2px 2px rgba(255,255,255,.8),inset 0 -3px 5px rgba(0,0,0,.16)}
+@media (prefers-reduced-motion:reduce){.btn::before,.btn::after{transition:none}}
 .btn.wide{width:100%;margin-top:14px}
 
 /* task rows */
@@ -170,15 +193,15 @@ h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spaci
 .task .ok{display:none}
 .task{display:grid;grid-template-columns:1fr auto;gap:8px 14px;align-items:center;background:var(--ink);border:1px solid var(--line);padding:12px 14px}
 .task.done{border-color:var(--mint-2)}
-.task .t{font-weight:600}
+.task .t{font-weight:600;grid-column:1}
 .task .d{color:var(--mute);font-size:14px;grid-column:1}
-.task .act{grid-row:1 / span 2;display:flex;gap:8px;align-items:center}
-.task a.btn,.task button.btn{padding:10px 14px;font-size:14px}
+.task .act{grid-column:2;grid-row:1 / span 2;display:flex;gap:8px;align-items:center}
+.task a.btn,.task button.btn{--rim:4px;padding:calc(8px + var(--rim)) calc(16px + var(--rim));font-size:14px;border-radius:12px}
 .task .ok{display:none;color:var(--acc);font-weight:600;padding:0 6px}
 @media (max-width:460px){
   .summary{max-width:12ch}
   .task{grid-template-columns:1fr}
-  .task .act{grid-row:auto;justify-content:flex-start}
+  .task .act{grid-column:1;grid-row:auto;justify-content:flex-start}
 }
 
 /* success */
