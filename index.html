@@ -6,6 +6,7 @@
 <title>Liqi — Claim your welcome bonus</title>
 <meta name="description" content="Finish the tasks on X, add your Robinhood Wallet address, and your $35 Liqi welcome bonus is reserved. Payouts go live soon.">
 <meta name="theme-color" content="#07181f">
+<script>try{if(localStorage.getItem("liqi.theme")==="day")document.documentElement.dataset.theme="day"}catch(e){}</script>
 
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -49,10 +50,25 @@
   --mute:#7fa49c;       /* secondary text */
   --warn:#ffb86b;
   --bad:#ff7d7d;
+  --acc:#90fbdd;        /* accent as text / stroke */
+  --on:#07181f;         /* text on accent fills */
+  --mint-h:#a9ffe8;     /* accent hover */
+  --ph:#4b6b65;         /* placeholder */
+  --pool:rgba(144,251,221,.10);
+  --hatch:rgba(144,251,221,.045);
   --f:"Chakra Petch",system-ui,sans-serif;
   --c:14px;             /* chamfer size */
   --c-s:8px;
   color-scheme:dark;
+}
+/* day theme: same geometry, the mint moves onto paper */
+:root[data-theme="day"]{
+  --ink:#e8f5f0; --deep:#d3e8e1; --well:#f7fcfa; --line:#b3d2c8;
+  --mint:#62e6c2; --mint-2:#33c6a0; --mint-h:#7ff0d1;
+  --ice:#07181f; --mute:#4c6e66; --bad:#c43a3a;
+  --acc:#0a7a63; --ph:#8fb0a7;
+  --pool:rgba(98,230,194,.30); --hatch:rgba(7,24,31,.05);
+  color-scheme:light;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -60,17 +76,18 @@ html,body{margin:0}
 body{
   background:var(--ink);color:var(--ice);font-family:var(--f);font-size:16px;line-height:1.5;
   min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  transition:background-color .45s ease,color .45s ease;
 }
 /* faint diagonal hatch at the mark's angle, plus a mint pool behind the mark */
 body::before{
   content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
-    radial-gradient(60vmax 60vmax at 18% 40%, rgba(144,251,221,.10), transparent 60%),
-    repeating-linear-gradient(109deg, rgba(144,251,221,.045) 0 1px, transparent 1px 44px);
+    radial-gradient(60vmax 60vmax at 18% 40%, var(--pool), transparent 60%),
+    repeating-linear-gradient(109deg, var(--hatch) 0 1px, transparent 1px 44px);
 }
-a{color:var(--mint)}
+a{color:var(--acc)}
 button,input{font:inherit}
-:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
 
 /* chamfered corners, the logo's geometry carried into the UI */
 .cut{clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)),calc(100% - var(--c)) 100%,0 100%,0 var(--c))}
@@ -82,9 +99,10 @@ button,input{font:inherit}
 /* top bar */
 .top{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ice);font-weight:600;font-size:18px;letter-spacing:.02em}
-.brand svg{width:34px;height:34px;display:block}
+.brand svg{width:34px;height:34px;display:block;fill:var(--acc);fill-rule:evenodd}
+.top-r{display:flex;align-items:center;gap:16px}
 .xhandle{color:var(--mute);text-decoration:none;font-weight:500}
-.xhandle:hover{color:var(--mint)}
+.xhandle:hover{color:var(--acc)}
 
 /* hero + panel */
 .stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,520px);gap:clamp(32px,5vw,72px);align-items:start;margin-top:clamp(36px,7vh,88px)}
@@ -95,17 +113,17 @@ button,input{font:inherit}
 h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spacing:.01em;margin:10px 0 22px;max-width:11ch;text-wrap:balance}
 .eyebrow{margin:0;color:var(--mute);font-weight:500}
 .bonus{display:flex;align-items:flex-end;gap:16px;margin:0 0 20px}
-.bonus .amt{font-size:clamp(64px,8vw,104px);font-weight:700;line-height:.9;color:var(--mint);letter-spacing:-.02em}
+.bonus .amt{font-size:clamp(64px,8vw,104px);font-weight:700;line-height:.9;color:var(--acc);letter-spacing:-.02em}
 .bonus .for{color:var(--ice);max-width:16ch;line-height:1.3;padding-bottom:8px;display:flex;flex-direction:column;gap:8px}
-.soon{align-self:flex-start;font-size:13px;font-weight:600;color:var(--ink);background:var(--warn);padding:3px 9px;clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px)}
+.soon{align-self:flex-start;font-size:13px;font-weight:600;color:var(--on);background:var(--warn);padding:3px 9px;clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px)}
 .count[hidden]{display:none}
 .count{margin-top:28px;display:inline-flex;align-items:baseline;gap:10px;color:var(--mute)}
-.count b{font-size:28px;color:var(--mint);font-weight:600;font-variant-numeric:tabular-nums}
+.count b{font-size:28px;color:var(--acc);font-weight:600;font-variant-numeric:tabular-nums}
 
 /* the panel: a single column with a spine on the left that fills as you go */
 .panel{background:var(--deep);padding:6px;position:relative}
 .panel::after{ /* mint edge along the chamfer */
-  content:"";position:absolute;left:0;top:0;width:3px;height:100%;background:linear-gradient(var(--mint) var(--fill,0%),var(--line) 0);transition:--fill .6s;
+  content:"";position:absolute;left:0;top:0;width:3px;height:100%;background:linear-gradient(var(--acc) var(--fill,0%),var(--line) 0);transition:--fill .6s;
 }
 .steps{display:flex;flex-direction:column;gap:6px}
 .step{background:var(--well);padding:18px 20px 20px;position:relative}
@@ -115,32 +133,32 @@ h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spaci
 .step-h{display:flex;align-items:center;gap:14px}
 .num{width:30px;height:30px;flex:none;display:grid;place-items:center;font-weight:700;font-size:14px;
   background:var(--line);color:var(--ice);clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
-.step[data-state="active"] .num{background:var(--mint);color:var(--ink)}
-.step[data-state="done"] .num{background:var(--mint-2);color:var(--ink)}
+.step[data-state="active"] .num{background:var(--mint);color:var(--on)}
+.step[data-state="done"] .num{background:var(--mint-2);color:var(--on)}
 .step-h h2{margin:0;font-size:18px;font-weight:600;flex:1;white-space:nowrap}
 .summary{color:var(--mute);font-size:15px;max-width:22ch;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.edit{background:none;border:0;color:var(--mint);cursor:pointer;padding:4px 6px;font-weight:500}
+.edit{background:none;border:0;color:var(--acc);cursor:pointer;padding:4px 6px;font-weight:500}
 .body{margin-top:16px}
 .hint{color:var(--mute);margin:0 0 14px;font-size:15px}
 
 /* fields */
 .field{display:flex;align-items:stretch;background:var(--ink);border:1px solid var(--line)}
-.field:focus-within{border-color:var(--mint)}
+.field:focus-within{border-color:var(--acc)}
 .field .pre{display:grid;place-items:center;padding:0 14px;color:var(--mute);border-right:1px solid var(--line);font-weight:500}
 .field input{flex:1;min-width:0;background:none;border:0;color:var(--ice);padding:14px 14px;font-size:17px;letter-spacing:.01em}
-.field input::placeholder{color:#4b6b65}
+.field input::placeholder{color:var(--ph)}
 .msg{min-height:22px;margin:8px 0 0;font-size:14px;color:var(--mute)}
 .msg.bad{color:var(--bad)}
-.msg.ok{color:var(--mint)}
+.msg.ok{color:var(--acc)}
 
 .btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 22px;border:0;cursor:pointer;
-  background:var(--mint);color:var(--ink);font-weight:700;font-size:16px;letter-spacing:.01em;
+  background:var(--mint);color:var(--on);font-weight:700;font-size:16px;letter-spacing:.01em;
   clip-path:polygon(var(--c-s) 0,100% 0,100% calc(100% - var(--c-s)),calc(100% - var(--c-s)) 100%,0 100%,0 var(--c-s))}
-.btn:hover{background:#a9ffe8}
+.btn:hover{background:var(--mint-h)}
 .btn:active{background:var(--mint-2)}
 .btn[disabled]{background:var(--line);color:var(--mute);cursor:not-allowed}
-.btn.ghost{background:transparent;color:var(--mint);box-shadow:inset 0 0 0 1px var(--line)}
-.btn.ghost:hover{box-shadow:inset 0 0 0 1px var(--mint)}
+.btn.ghost{background:transparent;color:var(--acc);box-shadow:inset 0 0 0 1px var(--line)}
+.btn.ghost:hover{box-shadow:inset 0 0 0 1px var(--acc)}
 .btn.wide{width:100%;margin-top:14px}
 
 /* task rows */
@@ -148,7 +166,7 @@ h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spaci
 .task:not(.current){display:none}
 .progress{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:0 0 12px}
 .progress i{display:block;height:4px;background:var(--line)}
-.progress i.on{background:var(--mint)}
+.progress i.on{background:var(--acc)}
 .task .ok{display:none}
 .task{display:grid;grid-template-columns:1fr auto;gap:8px 14px;align-items:center;background:var(--ink);border:1px solid var(--line);padding:12px 14px}
 .task.done{border-color:var(--mint-2)}
@@ -156,7 +174,7 @@ h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spaci
 .task .d{color:var(--mute);font-size:14px;grid-column:1}
 .task .act{grid-row:1 / span 2;display:flex;gap:8px;align-items:center}
 .task a.btn,.task button.btn{padding:10px 14px;font-size:14px}
-.task .ok{display:none;color:var(--mint);font-weight:600;padding:0 6px}
+.task .ok{display:none;color:var(--acc);font-weight:600;padding:0 6px}
 @media (max-width:460px){
   .summary{max-width:12ch}
   .task{grid-template-columns:1fr}
@@ -173,8 +191,50 @@ h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spaci
 
 footer{margin-top:72px;color:var(--mute);font-size:14px;display:flex;flex-wrap:wrap;gap:8px 24px}
 footer a{color:var(--mute)}
-footer a:hover{color:var(--mint)}
+footer a:hover{color:var(--acc)}
 
+
+/* day / night switch: a glossy pill with a small pixel landscape inside,
+   and a sphere that is the sun on one side and the moon on the other */
+.dn{--w:76px;--h:36px;--k:28px;position:relative;flex:none;width:var(--w);height:var(--h);padding:0;border:0;cursor:pointer;
+  border-radius:999px;overflow:hidden;background:#0c2a3a;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.55),inset 0 -1px 0 rgba(255,255,255,.12),0 0 0 1px var(--line);
+  transition:background-color .5s ease}
+:root[data-theme="day"] .dn{background:#8fd6f2;box-shadow:inset 0 2px 5px rgba(7,24,31,.28),inset 0 -1px 0 rgba(255,255,255,.6),0 0 0 1px var(--line)}
+.dn svg{position:absolute;inset:0;width:100%;height:100%;display:block;shape-rendering:crispEdges}
+.dn .stars,.dn .clouds{transition:opacity .4s ease,transform .5s ease}
+.dn .clouds{opacity:0;transform:translateY(4px)}
+.dn .hill-b{fill:#12495a;transition:fill .5s ease}
+.dn .hill-f{fill:#1c6f6c;transition:fill .5s ease}
+:root[data-theme="day"] .dn .stars{opacity:0;transform:translateY(-4px)}
+:root[data-theme="day"] .dn .clouds{opacity:1;transform:none}
+:root[data-theme="day"] .dn .hill-b{fill:#5cc48f}
+:root[data-theme="day"] .dn .hill-f{fill:#2f9d6b}
+.dn .knob{position:absolute;top:calc((var(--h) - var(--k))/2);left:calc((var(--h) - var(--k))/2);width:var(--k);height:var(--k);border-radius:50%;
+  transform:translateX(calc(var(--w) - var(--h)));transition:transform .5s cubic-bezier(.5,1.5,.5,1);
+  box-shadow:0 2px 4px rgba(0,0,0,.45)}
+:root[data-theme="day"] .dn .knob{transform:none}
+.dn .knob::before,.dn .knob::after{content:"";position:absolute;inset:0;border-radius:50%;transition:opacity .4s ease}
+.dn .knob::before{ /* moon */
+  background:
+    radial-gradient(circle at 34% 28%,rgba(255,255,255,.95) 0 9%,transparent 30%),
+    radial-gradient(circle at 66% 38%,#9fc4ba 0 11%,transparent 12%),
+    radial-gradient(circle at 40% 68%,#9fc4ba 0 15%,transparent 16%),
+    radial-gradient(circle at 72% 72%,#9fc4ba 0 7%,transparent 8%),
+    radial-gradient(circle at 38% 32%,#eefaf6,#c4e2da 55%,#86ada3)}
+.dn .knob::after{ /* sun */
+  opacity:0;background:
+    radial-gradient(circle at 34% 28%,rgba(255,255,255,.95) 0 9%,transparent 32%),
+    radial-gradient(circle at 38% 32%,#fff3b0,#ffd04a 50%,#f29a1f)}
+:root[data-theme="day"] .dn .knob::before{opacity:0}
+:root[data-theme="day"] .dn .knob::after{opacity:1}
+.dn::after{ /* gloss */
+  content:"";position:absolute;left:4px;right:4px;top:2px;height:46%;border-radius:999px;pointer-events:none;
+  background:linear-gradient(rgba(255,255,255,.34),rgba(255,255,255,0))}
+@media (max-width:420px){.top-r{gap:10px}.xhandle{font-size:14px}}
+@media (prefers-reduced-motion:reduce){
+  body,.dn,.dn *,.dn .knob::before,.dn .knob::after{transition:none}
+}
 </style>
 </head>
 <body>
@@ -182,10 +242,13 @@ footer a:hover{color:var(--mint)}
 
   <header class="top">
     <a class="brand" href="/" aria-label="Liqi home">
-      <svg viewBox="60 88 280 224" aria-hidden="true" fill="#90fbdd" fill-rule="evenodd"><path d="M71 140H328V177H277L268 200H297V236H249L222 301H177L155 247H190L200 266L230 177H71Z M96 98H135L154 140H109Z"/><path d="M102 200H132V187H168L176 200H213L199 237H102Z"/><path d="M264 98H305L292 130H252Z"/></svg>
+      <svg viewBox="60 88 280 224" aria-hidden="true"><path d="M71 140H328V177H277L268 200H297V236H249L222 301H177L155 247H190L200 266L230 177H71Z M96 98H135L154 140H109Z"/><path d="M102 200H132V187H168L176 200H213L199 237H102Z"/><path d="M264 98H305L292 130H252Z"/></svg>
       Liqi
     </a>
-    <a class="xhandle" href="https://x.com/liqiely" target="_blank" rel="noopener">@liqiely on X</a>
+    <div class="top-r">
+      <a class="xhandle" href="https://x.com/liqiely" target="_blank" rel="noopener">@liqiely on X</a>
+      <button class="dn" id="dn" type="button" role="switch" aria-checked="true" aria-label="Night mode"><svg viewBox="0 0 38 18" preserveAspectRatio="none" aria-hidden="true"><g class="stars" fill="#dff8f0"><rect x="3" y="3" width="1" height="1"/><rect x="7" y="6" width="1" height="1"/><rect x="10" y="2" width="1" height="1"/><rect x="14" y="5" width="1" height="1"/><rect x="18" y="3" width="1" height="1"/><rect x="21" y="7" width="1" height="1"/><rect x="5" y="9" width="1" height="1"/><rect x="12" y="8" width="1" height="1"/><rect x="16" y="10" width="1" height="1"/></g><g class="clouds" fill="#ffffff"><path d="M18 4h5v1h2v1h1v1h-10v-1h1v-1h1z M27 8h4v1h2v1h-8v-1h2z M11 9h3v1h1v1h-6v-1h2z"/></g><path class="hill-b" d="M0 14h1v4h-1zM1 14h1v4h-1zM2 13h1v5h-1zM3 13h1v5h-1zM4 12h1v6h-1zM5 11h1v7h-1zM6 11h1v7h-1zM7 10h1v8h-1zM8 10h1v8h-1zM9 10h1v8h-1zM10 11h1v7h-1zM11 11h1v7h-1zM12 12h1v6h-1zM13 13h1v5h-1zM14 13h1v5h-1zM15 14h1v4h-1zM16 14h1v4h-1zM17 14h1v4h-1zM18 13h1v5h-1zM19 12h1v6h-1zM20 12h1v6h-1zM21 11h1v7h-1zM22 10h1v8h-1zM23 9h1v9h-1zM24 9h1v9h-1zM25 9h1v9h-1zM26 10h1v8h-1zM27 10h1v8h-1zM28 11h1v7h-1zM29 12h1v6h-1zM30 12h1v6h-1zM31 13h1v5h-1zM32 13h1v5h-1zM33 14h1v4h-1zM34 14h1v4h-1zM35 14h1v4h-1zM36 15h1v3h-1zM37 15h1v3h-1z"/><path class="hill-f" d="M0 13h1v5h-1zM1 13h1v5h-1zM2 14h1v4h-1zM3 14h1v4h-1zM4 15h1v3h-1zM5 15h1v3h-1zM6 15h1v3h-1zM7 16h1v2h-1zM8 16h1v2h-1zM9 16h1v2h-1zM10 16h1v2h-1zM11 15h1v3h-1zM12 15h1v3h-1zM13 14h1v4h-1zM14 14h1v4h-1zM15 13h1v5h-1zM16 13h1v5h-1zM17 13h1v5h-1zM18 14h1v4h-1zM19 14h1v4h-1zM20 15h1v3h-1zM21 15h1v3h-1zM22 16h1v2h-1zM23 16h1v2h-1zM24 16h1v2h-1zM25 15h1v3h-1zM26 15h1v3h-1zM27 14h1v4h-1zM28 14h1v4h-1zM29 13h1v5h-1zM30 13h1v5h-1zM31 12h1v6h-1zM32 12h1v6h-1zM33 12h1v6h-1zM34 13h1v5h-1zM35 13h1v5h-1zM36 14h1v4h-1zM37 14h1v4h-1z"/></svg><span class="knob"></span></button>
+    </div>
   </header>
 
   <main class="stage">
@@ -415,6 +478,23 @@ if (state.handle && state.wallet) {
   $("#sum1").textContent = "@" + state.handle;
   setStep(TASKS.every(t => state.tasks.has(t)) ? 3 : 2);
 }
+
+// --- day / night ---
+(function(){
+  const root = document.documentElement, btn = $("#dn"), meta = $('meta[name="theme-color"]');
+  const paint = () => {
+    const day = root.dataset.theme === "day";
+    btn.setAttribute("aria-checked", String(!day));
+    meta.content = day ? "#e8f5f0" : "#07181f";
+  };
+  btn.addEventListener("click", () => {
+    const day = root.dataset.theme !== "day";
+    if (day) root.dataset.theme = "day"; else delete root.dataset.theme;
+    try { localStorage.setItem("liqi.theme", day ? "day" : "night"); } catch {}
+    paint();
+  });
+  paint();
+})();
 
 // --- live counter ---
 async function loadCount(force){
