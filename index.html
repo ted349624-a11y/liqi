@@ -6,7 +6,7 @@
 <title>Liqi — Claim your welcome bonus</title>
 <meta name="description" content="Finish the tasks on X, add your Robinhood Wallet address, and your $35 Liqi welcome bonus is reserved. Payouts go live soon.">
 <meta name="theme-color" content="#07181f">
-<script>try{if(localStorage.getItem("liqi.theme")==="day")document.documentElement.dataset.theme="day"}catch(e){}</script>
+<script>try{if(localStorage.getItem("liqi.theme")==="day")document.documentElement.dataset.theme="day"}catch(e){}if(/^\/claim\/?$/.test(location.pathname))document.documentElement.classList.add("claim")</script>
 
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -226,6 +226,30 @@ h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spaci
 .done-card h2{margin:0 0 8px;font-size:26px;font-weight:700}
 .done-card p{margin:0;color:var(--mute)}
 .done-card .addr{display:block;margin-top:14px;font-size:14px;color:var(--ice);word-break:break-all;background:var(--ink);padding:12px 14px;border:1px solid var(--line)}
+.reserved .btn{margin-top:14px}
+.swap{display:none}
+.claim .swap{display:block}
+.claim .reserved{display:none}
+.swap-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.swap-h .soon{align-self:center}
+.leg{background:var(--ink);border:1px solid var(--line);padding:14px 16px 16px}
+.leg-t{display:flex;justify-content:space-between;gap:12px;color:var(--mute);font-size:14px}
+.leg-t b{color:var(--ice);font-weight:600;font-variant-numeric:tabular-nums}
+.leg-m{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px}
+.leg .q{font-size:clamp(30px,8vw,40px);font-weight:700;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.leg .q.dim{color:var(--ph)}
+.tok{flex:none;display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 6px;background:var(--well);border:1px solid var(--line);font-weight:600;
+  clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
+.ti{width:26px;height:26px;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:16px;
+  clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px)}
+.ti.usd{background:var(--mint);color:var(--on)}
+.ti.liq{background:#07181f}
+.ti.liq svg{width:18px;height:18px;fill:#90fbdd;fill-rule:evenodd}
+.flip{width:34px;height:34px;margin:-9px auto;position:relative;z-index:1;display:grid;place-items:center;background:var(--well);color:var(--acc);border:1px solid var(--line);
+  clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px)}
+.flip svg{width:18px;height:18px}
+.done-card .swap-n{margin-top:14px;font-size:14px}
+.swap-n b{color:var(--ice);font-weight:600}
 .invite{margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
 .invite h3{margin:0 0 10px;font-size:16px;font-weight:600}
 .invite .field input{font-size:15px;padding:13px 14px;text-overflow:ellipsis}
@@ -379,9 +403,28 @@ footer a:hover{color:var(--acc)}
       </div>
 
       <div class="done-card">
-        <h2>Your $35 welcome bonus is reserved, <span id="doneHandle">@you</span>.</h2>
-        <p>Payouts aren't live yet. We'll check the tasks against the post, then announce activation on @liqiely — keep notifications on so you see it first.</p>
-        <span class="addr" id="doneWallet"></span>
+        <div class="reserved">
+          <h2>Your $35 welcome bonus is reserved, <span id="doneHandle">@you</span>.</h2>
+          <p>Payouts aren't live yet. We'll check the tasks against the post, then announce activation on @liqiely — keep notifications on so you see it first.</p>
+          <span class="addr" id="doneWallet"></span>
+          <a class="btn ghost wide" href="/claim">See your balance</a>
+        </div>
+
+        <!-- /claim: the balance and a swap that is not open yet -->
+        <div class="swap">
+          <div class="swap-h"><h2>Swap</h2><span class="soon">Coming soon</span></div>
+          <div class="leg">
+            <div class="leg-t"><span>You pay</span><span>Balance <b>35.00</b></span></div>
+            <div class="leg-m"><span class="q">35.00</span><span class="tok"><i class="ti usd" aria-hidden="true">$</i>$ELYUSD</span></div>
+          </div>
+          <div class="flip" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v14M6 12l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"/></svg></div>
+          <div class="leg">
+            <div class="leg-t"><span>You receive</span><span>Rate set at launch</span></div>
+            <div class="leg-m"><span class="q dim">0.00</span><span class="tok"><i class="ti liq" aria-hidden="true"><svg viewBox="60 88 280 224"><path d="M71 140H328V177H277L268 200H297V236H249L222 301H177L155 247H190L200 266L230 177H71Z M96 98H135L154 140H109Z"/><path d="M102 200H132V187H168L176 200H213L199 237H102Z"/><path d="M264 98H305L292 130H252Z"/></svg></i>$LIQIELY</span></div>
+          </div>
+          <button class="btn wide" type="button" disabled>Swap coming soon</button>
+          <p class="swap-n">35 $ELYUSD is held for <b id="swapHandle">@you</b> at <span id="swapWallet"></span>. It can't be moved yet. Swapping to $LIQIELY opens at launch, announced on @liqiely.</p>
+        </div>
         <div class="invite">
           <h3>Your invite link</h3>
           <div class="field cut-s"><input id="refLink" readonly aria-label="Your invite link"><button class="copy" type="button" id="copyBtn">Copy</button></div>
@@ -537,6 +580,8 @@ function finish(w, refs){
   state.wallet = w; save();
   $("#doneHandle").textContent = "@" + state.handle;
   $("#doneWallet").textContent = w;
+  $("#swapHandle").textContent = "@" + state.handle;
+  $("#swapWallet").textContent = w.slice(0, 6) + "…" + w.slice(-4);
   const link = `${CONFIG.siteUrl}/?ref=${state.handle}`;
   $("#refLink").value = link;
   const text = `Reserved my $35 Liqi welcome bonus. @${CONFIG.handle}`;

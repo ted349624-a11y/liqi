@@ -23,6 +23,10 @@
 
 `og:image` / `twitter:image` etiketlerindeki alan adını kendi adresinle güncelle.
 
+## /claim sayfası
+
+`/claim` aynı sayfayı açar (`vercel.json` yönlendirmesi); akış ve kayıt aynıdır. Fark son ekrandadır: cüzdan girildikten sonra 35 $ELYUSD bakiye ve $LIQIELY'ye henüz açılmamış ("Coming soon") bir swap paneli gösterilir. Bakiye yalnızca arayüzde gösterilir; zincir üstünde bir token ya da transfer yoktur.
+
 ## Davet linki
 
 Cüzdanını giren herkese `siteUrl/?ref=kullanici` linki verilir ve bu linkle kayıt olanların sayısı ona gösterilir. Davet, gelen kişi görevleri bitirip cüzdanını girdiğinde ve yalnızca ilk kaydında sayılır; kişi kendini davet edemez.
