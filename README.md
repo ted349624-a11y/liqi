@@ -23,6 +23,10 @@
 
 `og:image` / `twitter:image` etiketlerindeki alan adını kendi adresinle güncelle.
 
+## Listeyi sıfırlama (yeni tur)
+
+`lib/db.js` içindeki `ROUND` ve `index.html` içindeki `CONFIG.round` değerini birlikte bir artır, push et. Sayaç 0'dan başlar, herkes görevleri yeniden yapar. Eski turların kayıtları silinmez; `/api/export?key=…&round=1` ile indirilebilir.
+
 ## API
 
 | Yol | Ne yapar |

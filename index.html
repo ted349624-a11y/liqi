@@ -384,6 +384,7 @@ footer a:hover{color:var(--acc)}
 <script>
 /* ====== CONFIG — edit these two lines ====== */
 const CONFIG = {
+  round: 2,           // must match ROUND in lib/db.js; bump both to reset everyone
   handle: "liqiely",   // your X account
   tweetId: "",         // launch post ID (digits from the post URL). Empty = buttons open the profile.
   siteUrl: "https://www.liqiely.xyz",
@@ -397,15 +398,27 @@ const TASKS = ["follow","like","repost","reply","notify"];
 const $ = (s, r=document) => r.querySelector(s);
 const $$ = (s, r=document) => [...r.querySelectorAll(s)];
 
+// Progress is stored per round, so a new round starts every visitor from step 1.
+const KEY = n => `liqi.r${CONFIG.round}.${n}`;
+const store = {
+  get(n){ try { return localStorage.getItem(KEY(n)); } catch { return null; } },
+  set(n, v){ try { localStorage.setItem(KEY(n), v); } catch {} },
+};
+try { // drop progress left over from earlier rounds
+  ["liqi.handle","liqi.tasks","liqi.wallet"].forEach(n => localStorage.removeItem(n));
+  for (let r = 2; r < CONFIG.round; r++) ["handle","tasks","wallet"].forEach(n => localStorage.removeItem(`liqi.r${r}.${n}`));
+} catch {}
+let savedTasks = [];
+try { savedTasks = JSON.parse(store.get("tasks") || "[]"); } catch {}
 const state = {
-  handle: localStorage.getItem("liqi.handle") || "",
-  tasks: new Set(JSON.parse(localStorage.getItem("liqi.tasks") || "[]")),
-  wallet: localStorage.getItem("liqi.wallet") || "",
+  handle: store.get("handle") || "",
+  tasks: new Set(Array.isArray(savedTasks) ? savedTasks : []),
+  wallet: store.get("wallet") || "",
 };
 const save = () => {
-  localStorage.setItem("liqi.handle", state.handle);
-  localStorage.setItem("liqi.tasks", JSON.stringify([...state.tasks]));
-  if (state.wallet) localStorage.setItem("liqi.wallet", state.wallet);
+  store.set("handle", state.handle);
+  store.set("tasks", JSON.stringify([...state.tasks]));
+  if (state.wallet) store.set("wallet", state.wallet);
 };
 
 // --- links ---
