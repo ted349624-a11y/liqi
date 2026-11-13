@@ -25,7 +25,9 @@
 
 ## /claim sayfası
 
-`/claim` aynı sayfayı açar (`vercel.json` yönlendirmesi); akış ve kayıt aynıdır. Fark son ekrandadır: cüzdan girildikten sonra 35 $ELYUSD bakiye ve $LIQIELY'ye henüz açılmamış ("Coming soon") bir swap paneli gösterilir. Bakiye yalnızca arayüzde gösterilir; zincir üstünde bir token ya da transfer yoktur.
+`/claim` aynı sayfayı açar (`vercel.json` yönlendirmesi) ama **ayrı bir liste** tutar: ana sayfada kayıt olmuş biri `/claim`'de görevleri ve cüzdanını yeniden girer; sayaç, davet linkleri (`/claim?ref=…`) ve davet sayıları da ayrıdır. Cüzdan girildikten sonra 35 $ELYUSD bakiye ve $LIQIELY'ye henüz açılmamış ("Coming soon") bir swap paneli gösterilir. Bakiye yalnızca arayüzde gösterilir; zincir üstünde bir token ya da transfer yoktur.
+
+`/claim` kayıtları için API çağrılarına `list=claim` eklenir: `/api/export?key=…&list=claim`, `/api/count?list=claim`, `/api/stats?x=…&list=claim`.
 
 ## Davet linki
 

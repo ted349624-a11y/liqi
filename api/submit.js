@@ -1,6 +1,6 @@
-import { redis, k, X_RE, WALLET_RE, TASKS, rateLimit } from "../lib/db.js";
+import { redis, keysFor, listOf, ROUND, X_RE, WALLET_RE, TASKS, rateLimit } from "../lib/db.js";
 
-// POST /api/submit  { x, wallet, tasks: [...], ref? }
+// POST /api/submit  { x, wallet, tasks: [...], ref?, list? }   list: "main" (default) or "claim"
 // A referral counts once, when the invited handle registers for the first time.
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
@@ -9,6 +9,7 @@ export default async function handler(req, res) {
     if (!(await rateLimit(req))) return res.status(429).json({ ok: false, error: "rate_limited" });
 
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+    const k = keysFor(ROUND, listOf(body.list));
     const x = String(body.x || "").trim().replace(/^@/, "");
     const wallet = String(body.wallet || "").trim();
     let ref = String(body.ref || "").trim().replace(/^@/, "");

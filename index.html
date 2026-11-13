@@ -407,7 +407,7 @@ footer a:hover{color:var(--acc)}
           <h2>Your $35 welcome bonus is reserved, <span id="doneHandle">@you</span>.</h2>
           <p>Payouts aren't live yet. We'll check the tasks against the post, then announce activation on @liqiely — keep notifications on so you see it first.</p>
           <span class="addr" id="doneWallet"></span>
-          <a class="btn ghost wide" href="/claim">See your balance</a>
+          <a class="btn ghost wide" href="/claim">Go to claim</a>
         </div>
 
         <!-- /claim: the balance and a swap that is not open yet -->
@@ -460,7 +460,9 @@ const $ = (s, r=document) => r.querySelector(s);
 const $$ = (s, r=document) => [...r.querySelectorAll(s)];
 
 // Progress is stored per round, so a new round starts every visitor from step 1.
-const KEY = n => `liqi.r${CONFIG.round}.${n}`;
+// "/" and "/claim" are separate lists: separate progress here, separate records on the server.
+const LIST = /^\/claim\/?$/.test(location.pathname) ? "claim" : "main";
+const KEY = n => `liqi.r${CONFIG.round}.${LIST === "claim" ? "claim." : ""}${n}`;
 const store = {
   get(n){ try { return localStorage.getItem(KEY(n)); } catch { return null; } },
   set(n, v){ try { localStorage.setItem(KEY(n), v); } catch {} },
@@ -558,7 +560,7 @@ $("#f3").addEventListener("submit", async e => {
   b.disabled = true; m.textContent = "Saving…"; m.className = "msg";
   try{
     const r = await fetch(`${CONFIG.api}/submit`, {method:"POST", headers:{"content-type":"application/json"},
-      body: JSON.stringify({ x: state.handle, wallet: w, tasks: [...state.tasks], ref: store.get("ref") || "" })});
+      body: JSON.stringify({ x: state.handle, wallet: w, tasks: [...state.tasks], ref: store.get("ref") || "", list: LIST })});
     const j = await r.json().catch(() => ({}));
     if (!r.ok || !j.ok) {
       const err = {
@@ -582,7 +584,7 @@ function finish(w, refs){
   $("#doneWallet").textContent = w;
   $("#swapHandle").textContent = "@" + state.handle;
   $("#swapWallet").textContent = w.slice(0, 6) + "…" + w.slice(-4);
-  const link = `${CONFIG.siteUrl}/?ref=${state.handle}`;
+  const link = `${CONFIG.siteUrl}/${LIST === "claim" ? "claim" : ""}?ref=${state.handle}`;
   $("#refLink").value = link;
   const text = `Reserved my $35 Liqi welcome bonus. @${CONFIG.handle}`;
   $("#shareBtn").href = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}`;
@@ -606,7 +608,7 @@ function paintRefs(n){
 }
 async function loadRefs(){
   try{
-    const r = await fetch(`${CONFIG.api}/stats?x=${encodeURIComponent(state.handle)}`);
+    const r = await fetch(`${CONFIG.api}/stats?x=${encodeURIComponent(state.handle)}&list=${LIST}`);
     const j = await r.json();
     if (typeof j.refs === "number") paintRefs(j.refs);
   }catch{}
@@ -649,7 +651,7 @@ if (state.handle && state.wallet) {
 // --- live counter ---
 async function loadCount(force){
   try{
-    const r = await fetch(`${CONFIG.api}/count${force ? "?t=" + Date.now() : ""}`);
+    const r = await fetch(`${CONFIG.api}/count?list=${LIST}${force ? "&t=" + Date.now() : ""}`);
     const j = await r.json();
     if (typeof j.count === "number") { $("#countNum").textContent = j.count.toLocaleString(); $("#count").hidden = false; }
   }catch{}

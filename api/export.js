@@ -1,7 +1,8 @@
-import { redis, keysFor, ROUND } from "../lib/db.js";
+import { redis, keysFor, listOf, ROUND } from "../lib/db.js";
 
 // GET /api/export?key=ADMIN_KEY                      → full CSV (x, wallet, ref, refs, tasks, ts)
 // GET /api/export?key=ADMIN_KEY&format=wallets&limit=300 → wallets only, oldest first, one per line
+// Add &list=claim for the /claim page's list (default is the main page's).
 // Add &round=1 (or any earlier round) to export a previous list; default is the current round.
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
@@ -11,7 +12,9 @@ export default async function handler(req, res) {
   if (!got || got !== want) return res.status(401).send("Unauthorized.");
 
   const round = Math.max(1, Math.min(ROUND, parseInt(req.query.round, 10) || ROUND));
-  const k = keysFor(round);
+  const list = listOf(req.query.list);
+  const k = keysFor(round, list);
+  const tag = `r${round}${list === "claim" ? "-claim" : ""}`;
 
   try {
     const users = await redis.smembers(k.users);
@@ -37,7 +40,7 @@ export default async function handler(req, res) {
         .slice(0, limit)
         .map((r) => r.wallet);
       res.setHeader("Content-Type", "text/plain; charset=utf-8");
-      res.setHeader("Content-Disposition", `attachment; filename="liqi-r${round}-wallets-${list.length}.txt"`);
+      res.setHeader("Content-Disposition", `attachment; filename="liqi-${tag}-wallets-${list.length}.txt"`);
       return res.status(200).send(list.join("\n") + "\n");
     }
 
@@ -46,7 +49,7 @@ export default async function handler(req, res) {
       .concat(rows.map((r) => [r.x, r.wallet, r.ref, r.refs, r.tasks, r.ts].map(esc).join(",")))
       .join("\n");
     res.setHeader("Content-Type", "text/csv; charset=utf-8");
-    res.setHeader("Content-Disposition", `attachment; filename="liqi-r${round}-entries.csv"`);
+    res.setHeader("Content-Disposition", `attachment; filename="liqi-${tag}-entries.csv"`);
     return res.status(200).send(csv);
   } catch (e) {
     console.error(e);
