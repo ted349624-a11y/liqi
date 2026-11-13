@@ -446,6 +446,7 @@ const CONFIG = {
   round: 2,           // must match ROUND in lib/db.js; bump both to reset everyone
   handle: "liqiely",   // your X account
   tweetId: "2121219540248133817",         // launch post ID (digits from the post URL). Empty = buttons open the profile.
+  claimTweetId: "2121340667062268166", // post the tasks on /claim point at
   siteUrl: "https://www.liqiely.xyz",
   api: "/api"
 };
@@ -490,7 +491,7 @@ const save = () => {
 // --- links ---
 function xLink(kind){
   const profile = `https://x.com/${CONFIG.handle}`;
-  const id = CONFIG.tweetId;
+  const id = LIST === "claim" ? CONFIG.claimTweetId : CONFIG.tweetId;
   switch(kind){
     case "follow": return `https://x.com/intent/follow?screen_name=${CONFIG.handle}`;
     case "like":   return id ? `https://x.com/intent/like?tweet_id=${id}` : profile;
