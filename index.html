@@ -224,6 +224,17 @@ h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spaci
 .done-card h2{margin:0 0 8px;font-size:26px;font-weight:700}
 .done-card p{margin:0;color:var(--mute)}
 .done-card .addr{display:block;margin-top:14px;font-size:14px;color:var(--ice);word-break:break-all;background:var(--ink);padding:12px 14px;border:1px solid var(--line)}
+.invite{margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
+.invite h3{margin:0 0 10px;font-size:16px;font-weight:600}
+.invite .field input{font-size:15px;padding:13px 14px;text-overflow:ellipsis}
+.copy{flex:none;border:0;border-left:1px solid var(--line);background:none;color:var(--acc);font-weight:600;padding:0 16px;cursor:pointer;min-width:84px}
+.copy:hover{background:var(--well)}
+.done-card .refs{display:flex;align-items:baseline;gap:10px;margin:18px 0 6px;color:var(--mute)}
+.refs b{font-size:34px;line-height:1;font-weight:700;color:var(--acc);font-variant-numeric:tabular-nums}
+.refs b.bump{animation:bump .45s cubic-bezier(.3,1.7,.5,1)}
+@keyframes bump{from{transform:scale(1.35)}to{transform:none}}
+.refs b{display:inline-block}
+@media (prefers-reduced-motion:reduce){.refs b.bump{animation:none}}
 .panel.finished .steps{display:none}
 .panel.finished .done-card{display:block}
 
@@ -369,6 +380,11 @@ footer a:hover{color:var(--acc)}
         <h2>Your $35 welcome bonus is reserved, <span id="doneHandle">@you</span>.</h2>
         <p>Payouts aren't live yet. We'll check the tasks against the post, then announce activation on @liqiely — keep notifications on so you see it first.</p>
         <span class="addr" id="doneWallet"></span>
+        <div class="invite">
+          <h3>Your invite link</h3>
+          <div class="field cut-s"><input id="refLink" readonly aria-label="Your invite link"><button class="copy" type="button" id="copyBtn">Copy</button></div>
+          <p class="refs"><b id="refCount">0</b><span id="refLabel">people joined with your link</span></p>
+        </div>
         <a class="btn wide" id="shareBtn" target="_blank" rel="noopener">Share on X</a>
       </div>
     </section>
@@ -408,6 +424,11 @@ try { // drop progress left over from earlier rounds
   ["liqi.handle","liqi.tasks","liqi.wallet"].forEach(n => localStorage.removeItem(n));
   for (let r = 2; r < CONFIG.round; r++) ["handle","tasks","wallet"].forEach(n => localStorage.removeItem(`liqi.r${r}.${n}`));
 } catch {}
+// who invited this visitor: taken from ?ref=handle on first arrival, kept until they register
+(function(){
+  const r = (new URLSearchParams(location.search).get("ref") || "").trim().replace(/^@/, "");
+  if (/^[A-Za-z0-9_]{1,15}$/.test(r) && !store.get("ref")) store.set("ref", r);
+})();
 let savedTasks = [];
 try { savedTasks = JSON.parse(store.get("tasks") || "[]"); } catch {}
 const state = {
@@ -492,7 +513,7 @@ $("#f3").addEventListener("submit", async e => {
   b.disabled = true; m.textContent = "Saving…"; m.className = "msg";
   try{
     const r = await fetch(`${CONFIG.api}/submit`, {method:"POST", headers:{"content-type":"application/json"},
-      body: JSON.stringify({ x: state.handle, wallet: w, tasks: [...state.tasks] })});
+      body: JSON.stringify({ x: state.handle, wallet: w, tasks: [...state.tasks], ref: store.get("ref") || "" })});
     const j = await r.json().catch(() => ({}));
     if (!r.ok || !j.ok) {
       const err = {
@@ -504,22 +525,53 @@ $("#f3").addEventListener("submit", async e => {
       }[j.error] || "Something broke on our side. Try again in a moment.";
       m.textContent = err; m.className = "msg bad"; b.disabled = false; return;
     }
-    finish(w);
+    finish(w, j.refs);
   }catch{
     m.textContent = "No connection. Check your network and try again."; m.className="msg bad"; b.disabled = false;
   }
 });
 
-function finish(w){
+function finish(w, refs){
   state.wallet = w; save();
   $("#doneHandle").textContent = "@" + state.handle;
   $("#doneWallet").textContent = w;
+  const link = `${CONFIG.siteUrl}/?ref=${state.handle}`;
+  $("#refLink").value = link;
   const text = `Reserved my $35 Liqi welcome bonus. @${CONFIG.handle}`;
-  $("#shareBtn").href = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(CONFIG.siteUrl)}`;
+  $("#shareBtn").href = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}`;
   $("#panel").classList.add("finished");
   $("#panel").style.setProperty("--fill", "100%");
   loadCount(true);
+  if (typeof refs === "number") paintRefs(refs);
+  loadRefs();
+  setInterval(() => { if (!document.hidden) loadRefs(); }, 30000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) loadRefs(); });
 }
+
+// --- invite link: copy + how many joined through it ---
+let shownRefs = null;
+function paintRefs(n){
+  const el = $("#refCount");
+  el.textContent = n.toLocaleString();
+  $("#refLabel").textContent = n === 1 ? "person joined with your link" : "people joined with your link";
+  if (shownRefs !== null && n > shownRefs) { el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
+  shownRefs = n;
+}
+async function loadRefs(){
+  try{
+    const r = await fetch(`${CONFIG.api}/stats?x=${encodeURIComponent(state.handle)}`);
+    const j = await r.json();
+    if (typeof j.refs === "number") paintRefs(j.refs);
+  }catch{}
+}
+$("#refLink").addEventListener("focus", e => e.target.select());
+$("#copyBtn").addEventListener("click", async () => {
+  const input = $("#refLink"), b = $("#copyBtn");
+  try { await navigator.clipboard.writeText(input.value); }
+  catch { input.select(); try { document.execCommand("copy"); } catch {} }
+  b.textContent = "Copied";
+  setTimeout(() => { b.textContent = "Copy"; }, 1600);
+});
 
 // --- resume where the visitor left off ---
 if (state.handle && state.wallet) {

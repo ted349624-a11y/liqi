@@ -1,6 +1,6 @@
 import { redis, keysFor, ROUND } from "../lib/db.js";
 
-// GET /api/export?key=ADMIN_KEY                      → full CSV (x, wallet, tasks, ts)
+// GET /api/export?key=ADMIN_KEY                      → full CSV (x, wallet, ref, refs, tasks, ts)
 // GET /api/export?key=ADMIN_KEY&format=wallets&limit=300 → wallets only, oldest first, one per line
 // Add &round=1 (or any earlier round) to export a previous list; default is the current round.
 export default async function handler(req, res) {
@@ -19,11 +19,11 @@ export default async function handler(req, res) {
     for (let i = 0; i < users.length; i += 200) {
       const batch = users.slice(i, i + 200);
       const p = redis.pipeline();
-      batch.forEach((u) => p.hgetall(k.user(u)));
+      batch.forEach((u) => { p.hgetall(k.user(u)); p.scard(k.refs(u)); });
       const out = await p.exec();
-      out.forEach((u, j) => {
-        u = u || {};
-        rows.push({ x: u.x || batch[j], wallet: u.wallet || "", tasks: u.tasks || "", ts: u.ts || "" });
+      batch.forEach((h, j) => {
+        const u = out[j * 2] || {};
+        rows.push({ x: u.x || h, wallet: u.wallet || "", ref: u.ref || "", refs: out[j * 2 + 1] || 0, tasks: u.tasks || "", ts: u.ts || "" });
       });
     }
     rows.sort((a, b) => a.ts.localeCompare(b.ts));
@@ -42,8 +42,8 @@ export default async function handler(req, res) {
     }
 
     const esc = (v) => `"${String(v).replace(/"/g, '""')}"`;
-    const csv = [["x", "wallet", "tasks", "ts"].join(",")]
-      .concat(rows.map((r) => [r.x, r.wallet, r.tasks, r.ts].map(esc).join(",")))
+    const csv = [["x", "wallet", "ref", "refs", "tasks", "ts"].join(",")]
+      .concat(rows.map((r) => [r.x, r.wallet, r.ref, r.refs, r.tasks, r.ts].map(esc).join(",")))
       .join("\n");
     res.setHeader("Content-Type", "text/csv; charset=utf-8");
     res.setHeader("Content-Disposition", `attachment; filename="liqi-r${round}-entries.csv"`);

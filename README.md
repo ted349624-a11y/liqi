@@ -23,6 +23,10 @@
 
 `og:image` / `twitter:image` etiketlerindeki alan adını kendi adresinle güncelle.
 
+## Davet linki
+
+Cüzdanını giren herkese `siteUrl/?ref=kullanici` linki verilir ve bu linkle kayıt olanların sayısı ona gösterilir. Davet, gelen kişi görevleri bitirip cüzdanını girdiğinde ve yalnızca ilk kaydında sayılır; kişi kendini davet edemez.
+
 ## Listeyi sıfırlama (yeni tur)
 
 `lib/db.js` içindeki `ROUND` ve `index.html` içindeki `CONFIG.round` değerini birlikte bir artır, push et. Sayaç 0'dan başlar, herkes görevleri yeniden yapar. Eski turların kayıtları silinmez; `/api/export?key=…&round=1` ile indirilebilir.
@@ -32,8 +36,9 @@
 | Yol | Ne yapar |
 |---|---|
 | `POST /api/submit` | `{x, wallet, tasks}` kaydeder. Bir cüzdan tek X hesabına bağlanır. IP başına dakikada 10 istek. |
+| `GET /api/stats?x=kullanici` | `{refs}` — o kişinin davet linkiyle kayıt olanların sayısı. |
 | `GET /api/count` | `{count}` — listedeki cüzdan sayısı. |
-| `GET /api/export?key=ADMIN_KEY` | Tüm kayıtlar CSV (`x, wallet, tasks, ts`). |
+| `GET /api/export?key=ADMIN_KEY` | Tüm kayıtlar CSV (`x, wallet, ref, refs, tasks, ts`). |
 | `GET /api/export?key=ADMIN_KEY&format=wallets&limit=300` | Sadece cüzdanlar, en eski kayıttan başlayarak, satır satır. |
 
 Not: X görevleri kullanıcı onayına dayanır; X bunları ücretsiz API ile doğrulatmaz. Kazananları seçmeden önce handle'ları postta kontrol et.
