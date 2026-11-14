@@ -1,4 +1,4 @@
-import { redis, keysFor, listOf, ROUND, X_RE, WALLET_RE, TASKS, rateLimit } from "../lib/db.js";
+import { redis, keysFor, listOf, ROUND, X_RE, WALLET_RE, TASKS, rateLimit, nextPos, ensurePos } from "../lib/db.js";
 
 // POST /api/submit  { x, wallet, tasks: [...], ref?, list? }   list: "main" (default) or "claim"
 // A referral counts once, when the invited handle registers for the first time.
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
         await redis.set(k.wallet(wl), xl);
         await redis.hset(k.user(xl), { wallet, updated: new Date().toISOString() });
       }
-      return res.status(200).json({ ok: true, returning: true, refs: await redis.scard(k.refs(xl)), pos: Number(existing.pos) || null });
+      return res.status(200).json({ ok: true, returning: true, refs: await redis.scard(k.refs(xl)), pos: await ensurePos(k, xl, existing.pos) });
     }
 
     const claimed = await redis.set(k.wallet(wl), xl, { nx: true });
@@ -45,8 +45,7 @@ export default async function handler(req, res) {
       return res.status(409).json({ ok: false, error: "wallet_taken" });
 
     // Place in line = real registration order on this list.
-    if (!(await redis.exists(k.seq))) await redis.set(k.seq, await redis.scard(k.users), { nx: true });
-    const pos = await redis.incr(k.seq);
+    const pos = await nextPos(k);
 
     await redis.hset(k.user(xl), {
       x,
