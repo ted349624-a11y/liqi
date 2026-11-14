@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   try {
     const refs = await redis.scard(k.refs(x.toLowerCase()));
     const u = await redis.hgetall(k.user(x.toLowerCase()));
-    const pos = u && u.wallet ? await ensurePos(k, x.toLowerCase(), u.pos) : null; // only registered handles have a place
+    const pos = u && u.wallet ? await ensurePos(k, x.toLowerCase(), u.pos).catch(() => null) : null; // only registered handles have a place
     return res.status(200).json({ refs, pos });
   } catch (e) {
     console.error(e);

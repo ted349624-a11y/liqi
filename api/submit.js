@@ -37,7 +37,7 @@ export default async function handler(req, res) {
         await redis.set(k.wallet(wl), xl);
         await redis.hset(k.user(xl), { wallet, updated: new Date().toISOString() });
       }
-      return res.status(200).json({ ok: true, returning: true, refs: await redis.scard(k.refs(xl)), pos: await ensurePos(k, xl, existing.pos) });
+      return res.status(200).json({ ok: true, returning: true, refs: await redis.scard(k.refs(xl)), pos: await ensurePos(k, xl, existing.pos).catch(() => null) });
     }
 
     const claimed = await redis.set(k.wallet(wl), xl, { nx: true });
@@ -45,13 +45,14 @@ export default async function handler(req, res) {
       return res.status(409).json({ ok: false, error: "wallet_taken" });
 
     // Place in line = real registration order on this list.
-    const pos = await nextPos(k);
+    // Best effort: a failure here must never stop the wallet from being saved.
+    const pos = await nextPos(k).catch((e) => { console.error("pos failed:", e); return null; });
 
     await redis.hset(k.user(xl), {
       x,
       wallet,
       ref,
-      pos,
+      ...(pos ? { pos } : {}),
       tasks: tasks.join(","),
       ts: new Date().toISOString(),
       ua: String(req.headers["user-agent"] || "").slice(0, 160),
