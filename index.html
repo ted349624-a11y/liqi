@@ -526,7 +526,10 @@ function setStep(n){
 }
 $$("[data-edit]").forEach(b => b.addEventListener("click", () => setStep(+b.dataset.edit)));
 
-if (LIST === "claim") $('.step[data-step="3"] .num').textContent = "2";
+if (LIST === "claim") {
+  $('.step[data-step="3"] .num').textContent = "2";
+  $('.step[data-step="1"] .hint').textContent = "The X account this claim belongs to.";
+}
 
 // --- step 1 ---
 const handleIn = $("#handle");
