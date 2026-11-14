@@ -230,6 +230,10 @@ h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spaci
 .claim .step[data-step="2"]{display:none}
 .pos{margin:0 0 14px;color:var(--mute)}
 .done-card .pos b{color:var(--acc);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.for-claim{display:none}
+.claim .for-claim{display:inline}
+.claim .for-main{display:none}
+.claim .bonus .for{max-width:20ch}
 .swap{display:none}
 .claim .swap{display:block}
 .claim .reserved{display:none}
@@ -333,7 +337,7 @@ footer a:hover{color:var(--acc)}
     <section class="hero">
       <p class="eyebrow">Welcome bonus</p>
       <h1>CLAIM YOUR WELCOME BONUS</h1>
-      <div class="bonus"><span class="amt">$35</span><span class="for">for every account that completes the steps<span class="soon">Payouts coming soon</span></span></div>
+      <div class="bonus"><span class="amt">$35</span><span class="for"><span class="for-main">for every account that completes the steps</span><span class="for-claim">Hold $35 min of $LIQIELY. Earn $35 ELYUSD.</span><span class="soon">Payouts coming soon</span></span></div>
       <div class="count" id="count" hidden><b id="countNum">0</b><span>wallets on the list</span></div>
     </section>
 
