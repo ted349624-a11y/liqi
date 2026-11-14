@@ -43,6 +43,7 @@ Cüzdanını giren herkese `siteUrl/?ref=kullanici` linki verilir ve bu linkle k
 |---|---|
 | `POST /api/submit` | `{x, wallet, tasks}` kaydeder. Bir cüzdan tek X hesabına bağlanır. IP başına dakikada 10 istek. |
 | `GET /api/stats?x=kullanici` | `{refs}` — o kişinin davet linkiyle kayıt olanların sayısı. |
+| `GET /api/health?key=ADMIN_KEY` | Veritabanı bağlantısını dener, hata varsa tam metnini döner. |
 | `GET /api/count` | `{count}` — listedeki cüzdan sayısı. |
 | `GET /api/export?key=ADMIN_KEY` | Tüm kayıtlar CSV (`x, wallet, ref, refs, tasks, ts`). |
 | `GET /api/export?key=ADMIN_KEY&format=wallets&limit=300` | Sadece cüzdanlar, en eski kayıttan başlayarak, satır satır. |

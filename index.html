@@ -584,6 +584,7 @@ $("#f3").addEventListener("submit", async e => {
         tasks_incomplete: "Finish every task first.",
         wallet_taken: "This wallet is already linked to a different X account.",
         rate_limited: "Too many tries. Wait a minute and try again.",
+        db_limit: "The list is at capacity right now. Try again later today.",
       }[j.error] || "Something broke on our side. Try again in a moment.";
       m.textContent = err; m.className = "msg bad"; b.disabled = false; return;
     }
@@ -610,7 +611,7 @@ function finish(w, refs){
   if (typeof refs === "number") paintRefs(refs);
   paintPos();
   loadRefs();
-  setInterval(() => { if (!document.hidden) loadRefs(); }, 30000);
+  setInterval(() => { if (!document.hidden) loadRefs(); }, 120000);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) loadRefs(); });
 }
 
@@ -627,7 +628,10 @@ function paintPos(){
   const n = parseInt(store.get("pos"), 10);
   if (n > 0) { $("#posNum").textContent = "#" + n.toLocaleString(); $("#pos").hidden = false; }
 }
+let lastRefs = 0;
 async function loadRefs(){
+  if (Date.now() - lastRefs < 20000) return; // at most one lookup every 20 s per tab
+  lastRefs = Date.now();
   try{
     const r = await fetch(`${CONFIG.api}/stats?x=${encodeURIComponent(state.handle)}&list=${LIST}`);
     const j = await r.json();

@@ -61,7 +61,10 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ ok: true, returning: false, refs: await redis.scard(k.refs(xl)), pos });
   } catch (e) {
-    console.error(e);
-    return res.status(500).json({ ok: false, error: "server" });
+    console.error("submit failed:", e);
+    const msg = String((e && e.message) || e);
+    // Database refusing commands (plan limit reached) is a different problem from a bug: say so.
+    const error = /limit exceeded|max requests|quota|rate.?limit/i.test(msg) ? "db_limit" : "server";
+    return res.status(500).json({ ok: false, error });
   }
 }
