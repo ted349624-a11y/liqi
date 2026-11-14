@@ -25,7 +25,7 @@
 
 ## /claim sayfası
 
-`/claim` aynı sayfayı açar (`vercel.json` yönlendirmesi) ama hiçbir şey sormaz: X adı, görev ya da cüzdan yoktur ve sunucuya kayıt gönderilmez. Doğrudan swap paneli açılır: 35 $ELYUSD, karşısında $LIQIELY, "Coming soon" etiketi ve devre dışı buton. Panelin altında bunun canlı bakiye değil önizleme olduğu yazar.
+`/claim` aynı sayfayı açar (`vercel.json` yönlendirmesi) ama hiçbir şey sormaz: X adı, görev ya da cüzdan yoktur ve sunucuya kayıt gönderilmez. Doğrudan swap paneli açılır: 35 $ELYUSD, karşısında $LIQIELY, "Coming soon" etiketi ve devre dışı buton. Panelin altında bunun canlı bakiye değil önizleme olduğu yazar. Altında $LIQIELY kontrat adresi (kopyala butonuyla) ve Pons launchpad linki gösterilir; ikisi de `index.html` içindeki `CONFIG.token` alanından gelir.
 
 ## Davet linki
 

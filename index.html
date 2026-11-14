@@ -230,6 +230,10 @@ h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spaci
 .claim .done-card{display:block}
 .pos{margin:0 0 14px;color:var(--mute)}
 .done-card .pos b{color:var(--acc);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.token{display:none;margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
+.claim .token{display:block}
+.token h3{margin:0 0 10px;font-size:16px;font-weight:600}
+.token .field input{font-size:14px;padding:13px 14px;text-overflow:ellipsis}
 .n-open{display:none}
 .claim .n-open{display:inline}
 .claim .n-reg{display:none}
@@ -436,6 +440,11 @@ footer a:hover{color:var(--acc)}
           <button class="btn wide" type="button" disabled>Swap coming soon</button>
           <p class="swap-n"><span class="n-reg">35 $ELYUSD is held for <b id="swapHandle">@you</b> at <span id="swapWallet"></span>. It can't be moved yet. Swapping to $LIQIELY opens at launch, announced on @liqiely.</span><span class="n-open">This is a preview, not a live balance. Hold at least $35 of $LIQIELY to earn 35 $ELYUSD. Swapping opens at launch, announced on @liqiely.</span></p>
         </div>
+        <div class="token">
+          <h3>$LIQIELY contract address</h3>
+          <div class="field cut-s"><input id="caField" readonly aria-label="$LIQIELY contract address"><button class="copy" type="button" id="caCopy">Copy</button></div>
+          <a class="btn ghost wide" id="ponsLink" target="_blank" rel="noopener">Open on Pons launchpad</a>
+        </div>
         <div class="invite">
           <h3>Your invite link</h3>
           <div class="field cut-s"><input id="refLink" readonly aria-label="Your invite link"><button class="copy" type="button" id="copyBtn">Copy</button></div>
@@ -460,6 +469,10 @@ const CONFIG = {
   handle: "liqiely",   // your X account
   tweetId: "2121219540248133817",         // launch post ID (digits from the post URL). Empty = buttons open the profile.
   claimTweetId: "2121340667062268166", // post the tasks on /claim point at
+  token: {             // shown on /claim
+    ca: "0x2a4338e01e68e3786773da0ffd1e667d32e77258",
+    pons: "https://ponsfamily.com/launchpad/0x2a4338e01e68e3786773da0ffd1e667d32e77258"
+  },
   siteUrl: "https://www.liqiely.xyz",
   api: "/api"
 };
@@ -636,19 +649,26 @@ async function loadRefs(){
     if (j.pos) { store.set("pos", String(j.pos)); paintPos(); }
   }catch{}
 }
-$("#refLink").addEventListener("focus", e => e.target.select());
-$("#copyBtn").addEventListener("click", async () => {
-  const input = $("#refLink"), b = $("#copyBtn");
-  try { await navigator.clipboard.writeText(input.value); }
-  catch { input.select(); try { document.execCommand("copy"); } catch {} }
-  b.textContent = "Copied";
-  setTimeout(() => { b.textContent = "Copy"; }, 1600);
-});
+// copy buttons (invite link, contract address)
+function wireCopy(inputSel, btnSel){
+  const input = $(inputSel), b = $(btnSel);
+  input.addEventListener("focus", () => input.select());
+  b.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(input.value); }
+    catch { input.select(); try { document.execCommand("copy"); } catch {} }
+    b.textContent = "Copied";
+    setTimeout(() => { b.textContent = "Copy"; }, 1600);
+  });
+}
+wireCopy("#refLink", "#copyBtn");
+wireCopy("#caField", "#caCopy");
 
 // --- /claim is open to everyone: no handle, no wallet, nothing sent to the server ---
 if (LIST === "claim") {
   $("#panel").classList.add("finished");
   $("#panel").style.setProperty("--fill", "100%");
+  $("#caField").value = CONFIG.token.ca;
+  $("#ponsLink").href = CONFIG.token.pons;
   const text = `$35 welcome bonus for $LIQIELY holders. @${CONFIG.handle}`;
   $("#shareBtn").href = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(CONFIG.siteUrl + "/claim")}`;
 }
