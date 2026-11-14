@@ -226,10 +226,13 @@ h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spaci
 .done-card h2{margin:0 0 8px;font-size:26px;font-weight:700}
 .done-card p{margin:0;color:var(--mute)}
 .done-card .addr{display:block;margin-top:14px;font-size:14px;color:var(--ice);word-break:break-all;background:var(--ink);padding:12px 14px;border:1px solid var(--line)}
-.done-card .next{margin-top:10px;font-size:14px}
-.claim .step[data-step="2"]{display:none}
+.claim .steps,.claim .invite,.claim .pos{display:none}
+.claim .done-card{display:block}
 .pos{margin:0 0 14px;color:var(--mute)}
 .done-card .pos b{color:var(--acc);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.n-open{display:none}
+.claim .n-open{display:inline}
+.claim .n-reg{display:none}
 .for-claim{display:none}
 .claim .for-claim{display:inline}
 .claim .for-main{display:none}
@@ -415,8 +418,7 @@ footer a:hover{color:var(--acc)}
           <p>Payouts aren't live yet. We'll check the tasks against the post, then announce activation on @liqiely — keep notifications on so you see it first.</p>
           <span class="addr" id="doneWallet"></span>
           <a class="btn wide" href="/claim">Claim your $35</a>
-          <p class="next">Enter your handle and wallet again on the claim page to open your balance.</p>
-        </div>
+                  </div>
 
         <!-- /claim: the balance and a swap that is not open yet -->
         <div class="swap">
@@ -432,7 +434,7 @@ footer a:hover{color:var(--acc)}
             <div class="leg-m"><span class="q dim">0.00</span><span class="tok"><i class="ti liq" aria-hidden="true"><svg viewBox="60 88 280 224"><path d="M71 140H328V177H277L268 200H297V236H249L222 301H177L155 247H190L200 266L230 177H71Z M96 98H135L154 140H109Z"/><path d="M102 200H132V187H168L176 200H213L199 237H102Z"/><path d="M264 98H305L292 130H252Z"/></svg></i>$LIQIELY</span></div>
           </div>
           <button class="btn wide" type="button" disabled>Swap coming soon</button>
-          <p class="swap-n">35 $ELYUSD is held for <b id="swapHandle">@you</b> at <span id="swapWallet"></span>. It can't be moved yet. Swapping to $LIQIELY opens at launch, announced on @liqiely.</p>
+          <p class="swap-n"><span class="n-reg">35 $ELYUSD is held for <b id="swapHandle">@you</b> at <span id="swapWallet"></span>. It can't be moved yet. Swapping to $LIQIELY opens at launch, announced on @liqiely.</span><span class="n-open">This is a preview, not a live balance. Hold at least $35 of $LIQIELY to earn 35 $ELYUSD. Swapping opens at launch, announced on @liqiely.</span></p>
         </div>
         <div class="invite">
           <h3>Your invite link</h3>
@@ -447,7 +449,7 @@ footer a:hover{color:var(--acc)}
   <footer>
     <span>Liqi</span>
     <a href="https://x.com/liqiely" target="_blank" rel="noopener">x.com/liqiely</a>
-    <span>We store only your handle and wallet address. Nothing else, never your keys.</span>
+    <span class="n-reg">We store only your handle and wallet address. Nothing else, never your keys.</span><span class="n-open">This page asks for nothing and stores nothing.</span>
   </footer>
 </div>
 
@@ -526,11 +528,6 @@ function setStep(n){
 }
 $$("[data-edit]").forEach(b => b.addEventListener("click", () => setStep(+b.dataset.edit)));
 
-if (LIST === "claim") {
-  $('.step[data-step="3"] .num').textContent = "2";
-  $('.step[data-step="1"] .hint').textContent = "The X account this claim belongs to.";
-}
-
 // --- step 1 ---
 const handleIn = $("#handle");
 handleIn.value = state.handle;
@@ -543,7 +540,7 @@ $("#f1").addEventListener("submit", e => {
   m.textContent = ""; m.className = "msg";
   state.handle = h; save();
   $("#sum1").textContent = "@" + h;
-  setStep(LIST === "claim" ? 3 : 2); // /claim has no X tasks
+  setStep(2);
 });
 
 // --- step 2 ---
@@ -575,7 +572,7 @@ $("#f3").addEventListener("submit", async e => {
   b.disabled = true; m.textContent = "Saving…"; m.className = "msg";
   try{
     const r = await fetch(`${CONFIG.api}/submit`, {method:"POST", headers:{"content-type":"application/json"},
-      body: JSON.stringify({ x: state.handle, wallet: w, tasks: LIST === "claim" ? [] : [...state.tasks], ref: store.get("ref") || "", list: LIST })});
+      body: JSON.stringify({ x: state.handle, wallet: w, tasks: [...state.tasks], ref: store.get("ref") || "", list: LIST })});
     const j = await r.json().catch(() => ({}));
     if (!r.ok || !j.ok) {
       const err = {
@@ -648,13 +645,20 @@ $("#copyBtn").addEventListener("click", async () => {
   setTimeout(() => { b.textContent = "Copy"; }, 1600);
 });
 
+// --- /claim is open to everyone: no handle, no wallet, nothing sent to the server ---
+if (LIST === "claim") {
+  $("#panel").classList.add("finished");
+  $("#panel").style.setProperty("--fill", "100%");
+  const text = `$35 welcome bonus for $LIQIELY holders. @${CONFIG.handle}`;
+  $("#shareBtn").href = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(CONFIG.siteUrl + "/claim")}`;
+}
 // --- resume where the visitor left off ---
-if (state.handle && state.wallet) {
+else if (state.handle && state.wallet) {
   $("#sum1").textContent = "@" + state.handle;
   finish(state.wallet);
 } else if (state.handle) {
   $("#sum1").textContent = "@" + state.handle;
-  setStep(LIST === "claim" || TASKS.every(t => state.tasks.has(t)) ? 3 : 2);
+  setStep(TASKS.every(t => state.tasks.has(t)) ? 3 : 2);
 }
 
 // --- day / night ---
