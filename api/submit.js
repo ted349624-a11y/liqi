@@ -9,7 +9,8 @@ export default async function handler(req, res) {
     if (!(await rateLimit(req))) return res.status(429).json({ ok: false, error: "rate_limited" });
 
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
-    const k = keysFor(ROUND, listOf(body.list));
+    const list = listOf(body.list);
+    const k = keysFor(ROUND, list);
     const x = String(body.x || "").trim().replace(/^@/, "");
     const wallet = String(body.wallet || "").trim();
     let ref = String(body.ref || "").trim().replace(/^@/, "");
@@ -17,7 +18,8 @@ export default async function handler(req, res) {
 
     if (!X_RE.test(x)) return res.status(400).json({ ok: false, error: "bad_x" });
     if (!WALLET_RE.test(wallet)) return res.status(400).json({ ok: false, error: "bad_wallet" });
-    if (tasks.length !== TASKS.length) return res.status(400).json({ ok: false, error: "tasks_incomplete" });
+    // The X tasks belong to the main page; /claim only asks for a handle and a wallet.
+    if (list === "main" && tasks.length !== TASKS.length) return res.status(400).json({ ok: false, error: "tasks_incomplete" });
 
     const xl = x.toLowerCase();
     const wl = wallet.toLowerCase();
@@ -35,17 +37,22 @@ export default async function handler(req, res) {
         await redis.set(k.wallet(wl), xl);
         await redis.hset(k.user(xl), { wallet, updated: new Date().toISOString() });
       }
-      return res.status(200).json({ ok: true, returning: true, refs: await redis.scard(k.refs(xl)) });
+      return res.status(200).json({ ok: true, returning: true, refs: await redis.scard(k.refs(xl)), pos: Number(existing.pos) || null });
     }
 
     const claimed = await redis.set(k.wallet(wl), xl, { nx: true });
     if (!claimed && (await redis.get(k.wallet(wl))) !== xl)
       return res.status(409).json({ ok: false, error: "wallet_taken" });
 
+    // Place in line = real registration order on this list.
+    if (!(await redis.exists(k.seq))) await redis.set(k.seq, await redis.scard(k.users), { nx: true });
+    const pos = await redis.incr(k.seq);
+
     await redis.hset(k.user(xl), {
       x,
       wallet,
       ref,
+      pos,
       tasks: tasks.join(","),
       ts: new Date().toISOString(),
       ua: String(req.headers["user-agent"] || "").slice(0, 160),
@@ -53,7 +60,7 @@ export default async function handler(req, res) {
     await redis.sadd(k.users, xl);
     if (ref) await redis.sadd(k.refs(ref.toLowerCase()), xl);
 
-    return res.status(200).json({ ok: true, returning: false, refs: await redis.scard(k.refs(xl)) });
+    return res.status(200).json({ ok: true, returning: false, refs: await redis.scard(k.refs(xl)), pos });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ ok: false, error: "server" });

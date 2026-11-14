@@ -227,6 +227,9 @@ h1{font-weight:700;font-size:clamp(38px,5.4vw,70px);line-height:.96;letter-spaci
 .done-card p{margin:0;color:var(--mute)}
 .done-card .addr{display:block;margin-top:14px;font-size:14px;color:var(--ice);word-break:break-all;background:var(--ink);padding:12px 14px;border:1px solid var(--line)}
 .done-card .next{margin-top:10px;font-size:14px}
+.claim .step[data-step="2"]{display:none}
+.pos{margin:0 0 14px;color:var(--mute)}
+.done-card .pos b{color:var(--acc);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
 .swap{display:none}
 .claim .swap{display:block}
 .claim .reserved{display:none}
@@ -330,7 +333,7 @@ footer a:hover{color:var(--acc)}
     <section class="hero">
       <p class="eyebrow">Welcome bonus</p>
       <h1>CLAIM YOUR WELCOME BONUS</h1>
-      <div class="bonus"><span class="amt">$35</span><span class="for">for every account that completes the three steps<span class="soon">Payouts coming soon</span></span></div>
+      <div class="bonus"><span class="amt">$35</span><span class="for">for every account that completes the steps<span class="soon">Payouts coming soon</span></span></div>
       <div class="count" id="count" hidden><b id="countNum">0</b><span>wallets on the list</span></div>
     </section>
 
@@ -408,12 +411,13 @@ footer a:hover{color:var(--acc)}
           <p>Payouts aren't live yet. We'll check the tasks against the post, then announce activation on @liqiely — keep notifications on so you see it first.</p>
           <span class="addr" id="doneWallet"></span>
           <a class="btn wide" href="/claim">Claim your $35</a>
-          <p class="next">One more round of tasks on the claim page, then your balance opens.</p>
+          <p class="next">Enter your handle and wallet again on the claim page to open your balance.</p>
         </div>
 
         <!-- /claim: the balance and a swap that is not open yet -->
         <div class="swap">
           <div class="swap-h"><h2>Swap</h2><span class="soon">Coming soon</span></div>
+          <p class="pos" id="pos" hidden>Your place in line <b id="posNum"></b></p>
           <div class="leg">
             <div class="leg-t"><span>You pay</span><span>Balance <b>35.00</b></span></div>
             <div class="leg-m"><span class="q">35.00</span><span class="tok"><i class="ti usd" aria-hidden="true">$</i>$ELYUSD</span></div>
@@ -518,6 +522,8 @@ function setStep(n){
 }
 $$("[data-edit]").forEach(b => b.addEventListener("click", () => setStep(+b.dataset.edit)));
 
+if (LIST === "claim") $('.step[data-step="3"] .num').textContent = "2";
+
 // --- step 1 ---
 const handleIn = $("#handle");
 handleIn.value = state.handle;
@@ -530,7 +536,7 @@ $("#f1").addEventListener("submit", e => {
   m.textContent = ""; m.className = "msg";
   state.handle = h; save();
   $("#sum1").textContent = "@" + h;
-  setStep(2);
+  setStep(LIST === "claim" ? 3 : 2); // /claim has no X tasks
 });
 
 // --- step 2 ---
@@ -562,7 +568,7 @@ $("#f3").addEventListener("submit", async e => {
   b.disabled = true; m.textContent = "Saving…"; m.className = "msg";
   try{
     const r = await fetch(`${CONFIG.api}/submit`, {method:"POST", headers:{"content-type":"application/json"},
-      body: JSON.stringify({ x: state.handle, wallet: w, tasks: [...state.tasks], ref: store.get("ref") || "", list: LIST })});
+      body: JSON.stringify({ x: state.handle, wallet: w, tasks: LIST === "claim" ? [] : [...state.tasks], ref: store.get("ref") || "", list: LIST })});
     const j = await r.json().catch(() => ({}));
     if (!r.ok || !j.ok) {
       const err = {
@@ -574,6 +580,7 @@ $("#f3").addEventListener("submit", async e => {
       }[j.error] || "Something broke on our side. Try again in a moment.";
       m.textContent = err; m.className = "msg bad"; b.disabled = false; return;
     }
+    if (j.pos) store.set("pos", String(j.pos));
     finish(w, j.refs);
   }catch{
     m.textContent = "No connection. Check your network and try again."; m.className="msg bad"; b.disabled = false;
@@ -594,6 +601,7 @@ function finish(w, refs){
   $("#panel").style.setProperty("--fill", "100%");
   loadCount(true);
   if (typeof refs === "number") paintRefs(refs);
+  paintPos();
   loadRefs();
   setInterval(() => { if (!document.hidden) loadRefs(); }, 30000);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) loadRefs(); });
@@ -608,11 +616,16 @@ function paintRefs(n){
   if (shownRefs !== null && n > shownRefs) { el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
   shownRefs = n;
 }
+function paintPos(){
+  const n = parseInt(store.get("pos"), 10);
+  if (n > 0) { $("#posNum").textContent = "#" + n.toLocaleString(); $("#pos").hidden = false; }
+}
 async function loadRefs(){
   try{
     const r = await fetch(`${CONFIG.api}/stats?x=${encodeURIComponent(state.handle)}&list=${LIST}`);
     const j = await r.json();
     if (typeof j.refs === "number") paintRefs(j.refs);
+    if (j.pos) { store.set("pos", String(j.pos)); paintPos(); }
   }catch{}
 }
 $("#refLink").addEventListener("focus", e => e.target.select());
@@ -630,7 +643,7 @@ if (state.handle && state.wallet) {
   finish(state.wallet);
 } else if (state.handle) {
   $("#sum1").textContent = "@" + state.handle;
-  setStep(TASKS.every(t => state.tasks.has(t)) ? 3 : 2);
+  setStep(LIST === "claim" || TASKS.every(t => state.tasks.has(t)) ? 3 : 2);
 }
 
 // --- day / night ---

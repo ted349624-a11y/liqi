@@ -1,6 +1,6 @@
 import { redis, keysFor, listOf, ROUND } from "../lib/db.js";
 
-// GET /api/export?key=ADMIN_KEY                      → full CSV (x, wallet, ref, refs, tasks, ts)
+// GET /api/export?key=ADMIN_KEY                      → full CSV (x, wallet, pos, ref, refs, tasks, ts)
 // GET /api/export?key=ADMIN_KEY&format=wallets&limit=300 → wallets only, oldest first, one per line
 // Add &list=claim for the /claim page's list (default is the main page's).
 // Add &round=1 (or any earlier round) to export a previous list; default is the current round.
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
       const out = await p.exec();
       batch.forEach((h, j) => {
         const u = out[j * 2] || {};
-        rows.push({ x: u.x || h, wallet: u.wallet || "", ref: u.ref || "", refs: out[j * 2 + 1] || 0, tasks: u.tasks || "", ts: u.ts || "" });
+        rows.push({ x: u.x || h, wallet: u.wallet || "", ref: u.ref || "", pos: u.pos || "", refs: out[j * 2 + 1] || 0, tasks: u.tasks || "", ts: u.ts || "" });
       });
     }
     rows.sort((a, b) => a.ts.localeCompare(b.ts));
@@ -45,8 +45,8 @@ export default async function handler(req, res) {
     }
 
     const esc = (v) => `"${String(v).replace(/"/g, '""')}"`;
-    const csv = [["x", "wallet", "ref", "refs", "tasks", "ts"].join(",")]
-      .concat(rows.map((r) => [r.x, r.wallet, r.ref, r.refs, r.tasks, r.ts].map(esc).join(",")))
+    const csv = [["x", "wallet", "pos", "ref", "refs", "tasks", "ts"].join(",")]
+      .concat(rows.map((r) => [r.x, r.wallet, r.pos, r.ref, r.refs, r.tasks, r.ts].map(esc).join(",")))
       .join("\n");
     res.setHeader("Content-Type", "text/csv; charset=utf-8");
     res.setHeader("Content-Disposition", `attachment; filename="liqi-${tag}-entries.csv"`);

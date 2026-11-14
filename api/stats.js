@@ -1,6 +1,7 @@
 import { redis, keysFor, listOf, ROUND, X_RE } from "../lib/db.js";
 
-// GET /api/stats?x=handle[&list=claim] → { refs }  (how many people joined through this handle's link)
+// GET /api/stats?x=handle[&list=claim] → { refs, pos }
+// refs: how many people joined through this handle's link. pos: its place in line (registration order).
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   const x = String(req.query.x || "").trim().replace(/^@/, "");
@@ -8,7 +9,8 @@ export default async function handler(req, res) {
   const k = keysFor(ROUND, listOf(req.query.list));
   try {
     const refs = await redis.scard(k.refs(x.toLowerCase()));
-    return res.status(200).json({ refs });
+    const pos = Number(await redis.hget(k.user(x.toLowerCase()), "pos")) || null;
+    return res.status(200).json({ refs, pos });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ refs: null });
